@@ -30,8 +30,7 @@ def generate_math_exercise(maxsum=20):
             return render_template('exprblk.html', data_contents = output)
         else:
             return render_template('index.html', defaultisten=maxsum==10, data_contents = output)
-    except Exception,why:
-        print(why)
+    except:
         return ""
 
 if __name__ == '__main__':
