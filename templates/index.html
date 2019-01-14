@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculation Practice</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+        <h3 align="center">Calculation Practice 100</h3>
+        <div class="container">
+                <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                        <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                        <div class="col-xs-0"></div>
+                                        <div class="col-xs-8">
+                                                <select id="maxsum" class="form-control">
+                                                        {% if defaultisten %}
+                                                        <option value="10" selected>calculation max to 10</option>
+                                                        <option value="20" >calculation max to 20</option>
+                                                        {% else %}
+                                                        <option value="10" >calculation max to 10</option>
+                                                        <option value="20"  selected>calculation max to 20</option>
+                                                        {% endif %}
+                                                </select>
+                                        </div>
+                                        <div class="col-xs-4">
+                                                <button id="rexpr" type="submit" class="btn btn-default">Refresh</button>
+                                        </div>
+                                </div>
+                        </form>
+                </div>
+                <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+        </div>
+        <div class="container">
+                <div class="row">
+                        <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+                        <div id="expr_block" class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <table class="table table-striped table-hover table-condensed">
+                                {% for row in data_contents %}
+                                        <tr>
+                                        {% for col in row %}
+                                        <td> {{ col }} </td>
+                                        {% endfor %}
+                                        </tr>
+                                {% endfor %}
+                                </table>
+                        </div>
+                        <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+        </div>
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script>
+                $(document).ready(function(){
+                        $("#maxsum").on('change', function(e){
+                                $.ajax({type: "POST",
+                                        url: "/class1/" + $("#maxsum").val(),
+                                        success: function(response) {
+                                                $("#expr_block").html(response);
+                                        }});
+                        });
+                        $("#rexpr").click(function(e){
+                                e.preventDefault();
+                                $.ajax({type: "POST",
+                                        url: "/class1/" + $("#maxsum").val(),
+                                        success: function(response) {
+                                                $("#expr_block").html(response);
+                                        }});
+                        });
+                });
+        </script>
+</body>
+</html>
