@@ -301,7 +301,7 @@ class WordTranslateResult(object):
             back.append(v+'<hr>')
             res_dict['sentence'] = v
         #LINE #1. POSP
-       if self.basicmean:
+        if self.basicmean:
             back_idx = len(back)
             posp = []
             for bmean in self.basicmean:
