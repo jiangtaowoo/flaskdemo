@@ -267,12 +267,8 @@ class WordTranslateResult(object):
         front = self.word
         sepc = '  '    #列分隔符
         sepr = '<br>'  #行分隔符
-        html_templ_head = """
-        <html><head><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container">
-        """
-        html_templ_tail = """
-        </div></body></html>
-        """
+        html_templ_head = """<html><head><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container">"""
+        html_templ_tail = """</div></body></html>"""
         html_posp_templ = u'<b class="label label-{0}">{1}</b>'
         html_bootstrap_div = u'<div class="container">{0}</div>'
         html_panel_head = u'<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title text-center">'
