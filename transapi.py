@@ -251,7 +251,8 @@ class WordTranslateResult(object):
             with open(filename, 'a+') as outf:
                 for datarow in dataset:
                     set_datarow(fieldnames, datarow)
-                    outf.write(self.gen_flashcard_format()['flashcard'].encode('utf-8'))
+                    carddata = self.gen_flashcard_data()
+                    outf.write(self.make_flashcard(carddata['front'], carddata['back']).encode('utf-8'))
                     outf.write('\n')
             return True
         elif dataset:
@@ -260,11 +261,15 @@ class WordTranslateResult(object):
             return True
         return False
 
+    #生成flashcard内容
+    def make_flashcard(self, front, back, delimiter="\t"):
+        return front + delimiter + back
 
     #生成FlashCard格式的结果数据, 一行数据, 允许使用HTML标识
-    def gen_flashcard_format(self):
+    def gen_flashcard_data(self):
         res_dict = {}
         front = self.word
+        res_dict['front'] = front
         sepc = '  '    #列分隔符
         sepr = '<br>'  #行分隔符
         html_templ_head = """<html><head><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container">"""
@@ -391,7 +396,6 @@ class WordTranslateResult(object):
         res_dict['enmean'] = '\n'.join(back[back_idx:])
         #合成卡片内容
         res_dict['back'] = html_templ_head + sepr.join(back) + html_templ_tail
-        res_dict['flashcard'] = front + '\t' + res_dict['back']
         return res_dict
 
 
@@ -478,14 +482,14 @@ class BDTranslation(object):
                 res = word_obj.parse_result_from_rsp(rsp)
                 if res:
                     word_obj.write_result_to_db()
-                    return word_obj.gen_flashcard_format()
+                    return word_obj.gen_flashcard_data()
                 else:
                     return None
             except Exception as e:
                 trans_log("translate_req except {0}".format(e))
                 return None
         else:
-            return word_obj.gen_flashcard_format()
+            return word_obj.gen_flashcard_data()
 
     @staticmethod
     def _detect_lang(word):
@@ -571,7 +575,8 @@ class BDTranslation(object):
                 word_in_dict = word_obj.read_result_from_db(word)
                 if word_in_dict:
                     #flash card info
-                    result = word_obj.gen_flashcard_format()['flashcard']
+                    carddata = word_obj.gen_flashcard_data()
+                    result = word_obj.make_flashcard(carddata['front'], carddata['back'])
                     flash_card.append((line,word,result))
             outfilename = '{0:%Y-%m-%d}_en_flashcard.txt'.format(datetime.datetime.today())
             with open(outfilename, 'w') as outf:
