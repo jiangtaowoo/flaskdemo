@@ -10,10 +10,10 @@ trans_obj = transapi.BDTranslation()
 def process_trans(word):
     try:
         res = trans_obj.single_translate(word)
-        res['result'] = 'success'
+        res['status'] = 'success'
         return jsonify(res)
     except:
-        return jsonify({'result':'fail'})
+        return jsonify({'status':'fail'})
 
 @app.route('/class1')
 @app.route('/class1/<maxsum>', methods=['GET','POST'])
