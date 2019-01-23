@@ -341,7 +341,8 @@ class WordTranslateResult(object):
         if self.basicmean:
             back_idx = len(back)
             for bmean in self.basicmean:
-                back.append(sepc.join([bmean['posp'], bmean['mean']]))
+                posp = _posp_html_format(bmean['posp'])
+                back.append(sepc.join([posp, bmean['mean']]))
             res_dict['mean'] = '\n'.join(back[back_idx:])
         #LINE #6. vocabulary
         if self.vocabulary:
@@ -519,49 +520,6 @@ class BDTranslation(object):
         else:
             BDTranslation._output_translate_result('{0} fail ...'.format(word))
             return {}
-
-    """
-    multiple words translation, use sqlite & text file
-    1. gevent_translate   save the word data to vocabulary.db
-    2. make_ankicard      query word data from vocabulary.db, and generate flashcard string, then write to text file
-    """
-    def translate_worker(self, workerid, params):
-        while self.words_tobe_t:
-            line, word = self.words_tobe_t.popleft()
-            if word:
-                params['word'] = word
-                result = BDTranslation._translate_request(**params)
-                if not result:
-                    trans_log(u'****** Worker {0} failed on line {1}: {2} ...'.format(workerid, line, word))
-                    gevent.sleep(5)
-                else:
-                    trans_log(u'Woker {0} is traslate line {1} successful: {2}...'.format(workerid, line, word))
-            else:
-                gevent.sleep(0)
-        trans_log('worker %d is quiting ...').format(workerid)
-
-    def gevent_translate(self, filename, sentence="", proxies=None):
-        if os.path.exists(filename):
-            words = yaml.load(open(filename))
-        sess = requests.session()
-        req_dict = dict()
-        js_dict = dict()
-        srclang = BDTranslation._detect_lang(words[0])
-        if proxies:
-            req_dict['proxies'] = proxies
-        params = {'sess':sess, 'req_dict':req_dict, 'js_dict':js_dict, 'sentence':sentence, 'srclang':srclang}
-        #add words to queue
-        self.words_tobe_t = deque([])
-        line = 0
-        for word in words:
-            line += 1
-            self.words_tobe_t.append((line,word))
-        #start thread worker
-        threads = []
-        c_worker_size = 20
-        for i in xrange(0,c_worker_size):
-            threads.append( gevent.spawn(self.translate_worker, i+1, params) )
-        gevent.joinall( threads )
 
     @staticmethod
     def make_anki_card(filename):
