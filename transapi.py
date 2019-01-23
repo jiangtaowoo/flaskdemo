@@ -56,6 +56,8 @@ class WordTranslateResult(object):
         self.means = dict()    #单词释义及例句
         #self.means['oxford'] = [{'en':'','zh':''},{'en':'', 'zh':''}]
         self.enmeans = []      #英文释义
+        self.pospkeys = {"adj":"adj", "adv":"adv", "n":"noun", "v":"verb"}
+        self.pospstyles = {"adj":"warning", "adv":"info", "noun":"danger", "verb":"success"}
         #[{'noun':[{tr, example, similar_word},{}]}]
 
     #vocabulary结果
@@ -265,12 +267,32 @@ class WordTranslateResult(object):
         front = self.word
         sepc = '  '    #列分隔符
         sepr = '<br>'  #行分隔符
+        html_templ_head = """
+        <html><head><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container">
+        """
+        html_templ_tail = """
+        </div></body></html>
+        """
+        html_posp_templ = u'<b class="label label-{0}">{1}</b>'
+        html_bootstrap_div = u'<div class="container">{0}</div>'
+        html_panel_head = u'<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title text-center">'
+        html_panel_tail = u'</h3></div></div>'
         def _pretty_str_format(inputstr):
             if not isinstance(inputstr, unicode):
                 inputstr = unicode(inputstr, "utf-8")
             word_pattern = re.compile(self.word, re.IGNORECASE)
             res = word_pattern.sub('<b>'+self.word+'</b>', inputstr)
             return re.sub(r'[\r\n\t]', ' ', res)
+        def _get_std_posp(posp):
+            for k in self.pospkeys:
+                if k in posp:
+                    return self.pospkeys[k]
+            return posp
+        def _posp_html_format(posp):
+            stdp = _get_std_posp(posp)
+            if stdp in self.pospstyles:
+                return html_posp_templ.format(self.pospstyles[stdp], posp)
+            return html_posp_templ.format("default", posp)
         #卡片反面
         back = []
         #第零行, 原文上下文对应的句子
@@ -278,7 +300,18 @@ class WordTranslateResult(object):
             v = _pretty_str_format(self.sentence)
             back.append(v+'<hr>')
             res_dict['sentence'] = v
-        #第一行, 读音分隔, 音标, 基本释义
+        #LINE #1. POSP
+       if self.basicmean:
+            back_idx = len(back)
+            posp = []
+            for bmean in self.basicmean:
+                stdp = _get_std_posp(bmean['posp'])
+                if stdp not in posp:
+                    posp.append(stdp)
+            if posp:
+                back.append(html_bootstrap_div.format(sepc.join([_posp_html_format(p) for p in posp])))
+                res_dict['posp'] = '\n'.join(back[back_idx:])
+        #LINE #2. 读音分隔, 音标, 基本释义
         (wordem, ph_am, ph_en) = ('', '', '')
         if self.wordem:
             wordem = ''.join(['<b style="color:red">', self.wordem, '</b>'])
@@ -286,11 +319,11 @@ class WordTranslateResult(object):
             ph_am = ''.join([u'美', ' [', self.ph_am, ']'])
         if self.ph_en:
             ph_en = ''.join([u'英', ' [', self.ph_en, ']'])
-        l = filter(len,[wordem, ph_am, ph_en, '<b>'+self.mean+'</b>', '<br>'])
+        l = filter(len,[wordem, ph_am, ph_en, '<b>'+self.mean+'</b>'])
         v = sepc.join(l)
         back.append(v)
         res_dict['basic'] = v
-        #第二行, 词形变换
+        #LINE #3. 词形变换
         l = []
         for attr, attrzh in self.__exchange_attrs__.iteritems():
             v = getattr(self, attr, "")
@@ -299,11 +332,17 @@ class WordTranslateResult(object):
         v = sepc.join(l)
         back.append(v)
         res_dict['transform'] = v
-        #第三行, tags
+        #LINE #4. tags
         if self.tags:
             back.append(self.tags.replace(',', sepc))
             res_dict['tag'] = back[-1]
-        #第四行, vocabulary
+        #LINE #5. 基本词义, 含词性 basicmean, 每条解释占一行
+        if self.basicmean:
+            back_idx = len(back)
+            for bmean in self.basicmean:
+                back.append(sepc.join([bmean['posp'], bmean['mean']]))
+            res_dict['mean'] = '\n'.join(back[back_idx:])
+        #LINE #6. vocabulary
         if self.vocabulary:
             if 'audio' in self.vocabulary:
                 #audio_v = "[sound: {0}]".format(self.vocabulary['audio']) 
@@ -315,20 +354,18 @@ class WordTranslateResult(object):
             elif 'definition' in self.vocabulary:
                 k = 'definition'
             if k:
+                back.append(u'<br>{0}VOCABULARY{1}'.format(html_panel_head,html_panel_tail))
                 vocab_v = _pretty_str_format(self.vocabulary[k])
                 vocab_v = re.sub(r'(<br>\s*)+', '<br>', vocab_v)
-                back.append('<hr>' + vocab_v + '<hr>')
+                #back.append('<hr>' + vocab_v + '<hr>')
+                back.append(vocab_v)
                 res_dict['vocabulary'] = vocab_v
-        #第五行, 基本词义, 含词性 basicmean, 每条解释占一行
-        if self.basicmean:
-            back_idx = len(back)
-            for bmean in self.basicmean:
-                back.append(sepc.join([bmean['posp'], bmean['mean']]))
-            res_dict['mean'] = '\n'.join(back[back_idx:])
         #第六行, 各词典解释及例句
         if self.means:
-            dictname = {'oxford': u'<br>牛津词典<hr>',
-                        'collins': u'<br>柯林斯词典<hr>'}
+            dictname = {'oxford': u'<br>{0}牛津词典{1}'.format(html_panel_head,html_panel_tail),
+                        'collins': u'<br>{0}柯林斯词典{1}'.format(html_panel_head,html_panel_tail)}
+            #dictname = {'oxford': u'<br>牛津词典<hr>',
+            #            'collins': u'<br>柯林斯词典<hr>'}
             for dname, dmeans in self.means.iteritems():
                 if dname in dictname:
                     back_idx = len(back)
@@ -357,7 +394,8 @@ class WordTranslateResult(object):
                             back.append('    similar: '+x)
         res_dict['enmean'] = '\n'.join(back[back_idx:])
         #合成卡片内容
-        res_dict['flashcard'] = front + '\t' + sepr.join(back)
+        res_dict['back'] = html_templ_head + sepr.join(back) + html_templ_tail
+        res_dict['flashcard'] = front + '\t' + res_dict['back']
         return res_dict
 
 
