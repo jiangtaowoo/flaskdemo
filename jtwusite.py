@@ -42,7 +42,7 @@ def process_md():
     try:
         if request.method=='POST':
             today = datetime.datetime.today()
-            post_path = os.sep.join(['.','posts','{0}'.format(today.year), '{0}'.format(today.month), '{0}'.format(today.day)]
+            post_path = os.sep.join(['.','posts','{0}'.format(today.year), '{0}'.format(today.month), '{0}'.format(today.day)])
             os.makedirs(post_path)
             md = request.args.get('md')
             html = request.args.get('html')
