@@ -65,7 +65,7 @@ def process_md():
 @app.route('/mdview/<filename>')
 def process_mdview(filename):
     today = datetime.datetime.today()
-    post_path = os.sep.join(['.','posts','{0}'.format(today.year), '{0}'.format(today.month), '{0}'.format(today.day)]
+    post_path = os.sep.join(['.','posts','{0}'.format(today.year), '{0}'.format(today.month), '{0}'.format(today.day)])
     filepath = os.sep.join([post_path, filename])
     if os.path.exists(filepath):
         f = open(filepath)
