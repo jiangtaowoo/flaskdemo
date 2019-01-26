@@ -10,7 +10,10 @@
 <body>
     <div class="container">
         <div class="row" style="padding: 10px 0; background-color: #444444">
-            <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11"></div>
+            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"></div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <input id="input_name" type="text" class="form-control" placeholder="{{ md_filename}}" />
+            </div>
             <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <button id="btn_submit" type="button" class="btn btn-info">提交</button>
             </div>
@@ -58,16 +61,18 @@
                         //imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                         //imageUploadURL : "./php/upload.php",
                         onload : function() {
-                            console.log('onload', this);
+                            //console.log('onload', this);
                         }
                     });
                 });
         $("#btn_submit").on('click', function(e){
                 $.post(
                     "/md",
-                    {"md":$("#area_md_data").text(), "html":$("div.editormd-preview").html()},
+                    {"md":$("#area_md_data").text(),
+                     "html":$("div.editormd-preview").html(),
+                     "name":$("#input_name").val()},
                     function(response) {
-                        window.location.replace(response);
+                        window.location.href = response;
                  });
         });
     </script>

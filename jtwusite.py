@@ -41,26 +41,32 @@ def generate_math_exercise(maxsum=20):
 def process_md():
     try:
         if request.method=='POST':
+            #prepare filepath
             today = datetime.datetime.today()
             post_path = os.sep.join(['.','posts','{0}'.format(today.year), '{0}'.format(today.month), '{0}'.format(today.day)])
-            os.makedirs(post_path)
-            md = request.args.get('md')
-            html = request.args.get('html')
-            filename = '{0}'.format(int(time.time()))
-            file_md = '.'.join([filename, 'md'])
-            file_html = '.'.join([filename, 'html'])
-            with open(os.sep.join([post_path, file_md]), 'w') as outf:
-                outf.write(md.encode('utf-8'))
-            with open(os.sep.join([post_path, file_html]), 'w') as outf:
-                outf.write(html.encode('utf-8'))
-            try:
-                return url_for('/mdview', filename=file_html)
-            except:
-                return url_for('process_404')
+            if not os.path.exists(post_path):
+                os.makedirs(post_path)
+            #get post data
+            md = request.values['md']
+            html = request.values['html']
+            filename = request.values['name']
+            file_md = os.sep.join([post_path, filename+'.md'])
+            file_html = os.sep.join([post_path, filename+'.html'])
+            if not os.path.exists(file_md):
+                with open(file_md, 'w') as outf:
+                    outf.write(md.encode('utf-8'))
+                with open(file_html, 'w') as outf:
+                    outf.write(html.encode('utf-8'))
+                try:
+                    return url_for('process_mdview', filename=filename+'.html')
+                except Exception, e:
+                    return url_for('process_404', errinfo=e)
+            else:
+                return url_for('process_404', errinfo='File {0} Exist!'.format(filename))
         else:
-            return render_template('md.html', md_content="#Title 1\n##Title 2")
-    except:
-        return redirect(url_for('process_404'))
+            return render_template('md.html', md_content="#Enjoy markdown editing", md_filename="your_filename")
+    except Exception, ee:
+        return redirect(url_for('process_404', errinfo=ee))
 
 @app.route('/mdview/<filename>')
 def process_mdview(filename):
@@ -71,11 +77,13 @@ def process_mdview(filename):
         f = open(filepath)
         return render_template('mdview.html', md_content=f.read().encode('utf-8'))
     else:
-        return redirect(url_for('process_404'))
+        return redirect(url_for('process_404', errinfo='File {0} not exists!'.format(filename)))
 
-@app.route('/notfound')
-def process_404():
+@app.route('/404/<errinfo>')
+def process_404(errinfo):
+    if errinfo:
+        return render_template('404.html', err_msg=errinfo)
     return render_template('404.html')
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=8080)
+   app.run(host='0.0.0.0', port=8080, debug=True)
