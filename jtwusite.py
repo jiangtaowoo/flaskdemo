@@ -6,6 +6,7 @@ import json
 import gencalc
 import time
 import datetime
+import codecs
 
 app = Flask(__name__)
 app.secret_key = 'welcome to jiangtaowu.com'
@@ -88,8 +89,8 @@ Markdown 内容显示
 def process_mdview(year,month,day,filename):
     filepath = os.sep.join(['.','posts',year,month,day,filename+".md"])
     if os.path.exists(filepath):
-        f = open(filepath)
-        return render_template("mdview.html", md_content=f.read().encode("utf-8"))
+        f = codecs.open(filepath,"r","utf-8")
+        return render_template("mdview.html", md_content=f.read())
     else:
         session['error_msg_404'] = "URL DOES NOT EXIST!"
         return redirect(url_for("process_404"))
