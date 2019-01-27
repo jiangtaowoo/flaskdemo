@@ -49,8 +49,8 @@
                         </div>
                         <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
         </div>
-        <script src="https://code.jquery.com/jquery.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
                 $(document).ready(function(){
                         $("#maxsum").on('change', function(e){
