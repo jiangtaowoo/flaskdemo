@@ -17,7 +17,7 @@ def set_weight(maxsum):
     #计算各个数字的概率
     acc = 0
     weights = []
-    rate_s = rate_sum[maxsum/10-1]
+    rate_s = rate_sum[int(maxsum/10)-1]
     for i in range(0,maxsum):
         acc += rate_num[i]
         weights.append(1.0*acc/rate_s)
