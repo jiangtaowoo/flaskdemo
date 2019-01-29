@@ -80,7 +80,7 @@ def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0
     op = _secure_op(a, op)
     a, b = _choose_another(a, op, addr)
     if not mixr:
-        return "{0} {1} {2} = ".format(a,op,b)
+        return "{0}     {1}     {2} = ".format(a,op,b)
     else:
         c = a+b if op=="+" else a-b
         newop = "+" if random.random()<0.5 else "-"
