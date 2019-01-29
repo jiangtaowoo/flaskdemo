@@ -347,7 +347,7 @@ class WordTranslateResult(object):
         #LINE #6. vocabulary
         if self.vocabulary:
             if 'audio' in self.vocabulary:
-                #audio_v = "[sound: {0}]".format(self.vocabulary['audio']) 
+                #audio_v = "[sound: {0}]".format(self.vocabulary['audio'])
                 #back.append(audio_v + ' <hr>')
                 res_dict['audio'] = self.vocabulary['audio']
             k = None
@@ -406,7 +406,8 @@ class WordTranslateResult(object):
 class BDTranslation(object):
     @staticmethod
     def _init_request(sess, req_dict, js_dict):
-        cookie_dict = {'locale': 'zh', 'BAIDUID': '84714D78F6D00E5CF202E62D0D643143:FG=1'}
+        cookie_dict = {'locale': 'zh', 'BAIDUID': '1A2E4E5A00EF753F3C8B59F9FF000AB5:FG=1'}
+        #cookie_dict = {'locale': 'zh', 'BAIDUID': '84714D78F6D00E5CF202E62D0D643143:FG=1'}
         sess.cookies = requests.utils.cookiejar_from_dict(cookie_dict)
         url = 'https://fanyi.baidu.com'
         headers = {'Host': 'fanyi.baidu.com', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/63.0.3239.84 Chrome/63.0.3239.84 Safari/537.36', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','Connection': 'keep-alive', 'Referer': 'https://fanyi.baidu.com/', 'X-Requested-With': 'XMLHttpRequest'}
