@@ -30,32 +30,64 @@ def choose_num(weights):
             return i
 
 # 20以内的加减法
-## 1.随机生成 3*20 = 60 道 10以内的加减法题目# 10以内的加减法, plusratio为产生加法算式的几率, addinrate为进位的几率
-def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8):
-    a, b = 0, 0
-    #先确定加法或是减法
-    op = "+" if random.random()<plusrate else "-"
-    addr = True if maxsum>10 and random.random()<addinrate else False
-    #开始算式选择
-    meet_require = False
-    #随机生成第一个数a
-    while not meet_require:
-        a = choose_num(weights)
-        b = choose_num(weights)
-        if op=="+":
-            if a+b>=minsum and a+b<=maxsum:
-                if not addr:
+## 1.随机生成 3*20 = 60 道 10以内的加减法题目# 10以内的加减法, plusratio为产生加法算式的几率, addinrate为进位的几率, mixrate为混合连加连减几率
+def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0.3):
+    #给定数字a, 选择满足要求的数字b
+    def _choose_another(a, op, addr, fixed_pos=False):
+        while True:
+            b = choose_num(weights)
+            if op=="+":
+                if a+b>=minsum and a+b<=maxsum:
+                    if a<2:
+                        break
+                    elif not addr or a>=10:
+                        break
+                    elif a<10 and b<10 and a+b>=10:
+                        break
+            else:
+                ab_exchange = False
+                if a<b:
+                    if not fixed_pos:
+                        a, b = b, a
+                        ab_exchange = True
+                    else:
+                        continue
+                elif a>b and a>18:
                     break
-                elif a<10 and b<10 and a+b>=10:
-                    break
-        else:
-            if a<b:
-                a, b = b, a
-                if not addr:
+                if not addr or a<=10:
                     break
                 elif a>10 and b<10 and b>a%10:
                     break
-    return "{0} {1} {2} = ".format(a,op,b), a, b, op
+                #not sucess this time, and a,b exchange, need to roll back
+                if ab_exchange:
+                    a, b = b, a
+        return a, b
+    def _secure_op(a, op):
+        if a>15:
+            return "-"
+        elif a<6:
+            return "+"
+        else:
+            return op
+    #先确定加法或是减法
+    op = "+" if random.random()<plusrate else "-"
+    addr = True if maxsum>10 and random.random()<addinrate else False
+    #是否生成连加连减
+    mixr = True if maxsum>10 and random.random()<mixrate else False
+    #开始算式选择
+    #随机生成第一个数a
+    a = choose_num(weights)
+    op = _secure_op(a, op)
+    a, b = _choose_another(a, op, addr)
+    if not mixr:
+        return "{0} {1} {2} = ".format(a,op,b)
+    else:
+        c = a+b if op=="+" else a-b
+        newop = "+" if random.random()<0.5 else "-"
+        newop = _secure_op(c, newop)
+        newaddr = True if maxsum>10 and random.random()<addinrate else False
+        c, d = _choose_another(c, newop, newaddr, True)
+        return "{0} {1} {2} {3} {4} = ".format(a,op,b,newop,d)
 
 def genexpr(minsum, maxsum, weights, delimiter="\t", duplicated=False):
     history = []
@@ -63,7 +95,7 @@ def genexpr(minsum, maxsum, weights, delimiter="\t", duplicated=False):
     for i in range(0,25):
         succ = 0
         while True:
-            expr = gen_exercise(minsum, maxsum, weights)[0]
+            expr = gen_exercise(minsum, maxsum, weights)
             if duplicated:
                 history.append(expr)
                 succ += 1
