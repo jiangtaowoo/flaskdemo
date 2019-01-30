@@ -33,9 +33,11 @@ def choose_num(weights):
 ## 1.随机生成 3*20 = 60 道 10以内的加减法题目# 10以内的加减法, plusratio为产生加法算式的几率, addinrate为进位的几率, mixrate为混合连加连减几率
 def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0.3):
     #给定数字a, 选择满足要求的数字b
-    def _choose_another(a, op, addr, fixed_pos=False):
+    def _choose_another(a, op, addr, excludes, fixed_pos=False):
         while True:
             b = choose_num(weights)
+            if excludes and b in excludes:
+                continue
             if op=="+":
                 if a+b>=minsum and a+b<=maxsum:
                     if a<2:
@@ -78,7 +80,7 @@ def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0
     #随机生成第一个数a
     a = choose_num(weights)
     op = _secure_op(a, op)
-    a, b = _choose_another(a, op, addr)
+    a, b = _choose_another(a, op, addr, None)
     if not mixr:
         return "{0}     {1}     {2} = ".format(a,op,b)
     else:
@@ -86,7 +88,12 @@ def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0
         newop = "+" if random.random()<0.5 else "-"
         newop = _secure_op(c, newop)
         newaddr = True if maxsum>10 and random.random()<addinrate else False
-        c, d = _choose_another(c, newop, newaddr, True)
+        excludes = None
+        if op=="+" and newop=="-":
+            excludes = [a,b]
+        elif op=="-" and newop=="+":
+            excludes = [b]
+        c, d = _choose_another(c, newop, newaddr, excludes, True)
         return "{0} {1} {2} {3} {4} = ".format(a,op,b,newop,d)
 
 def genexpr(minsum, maxsum, weights, delimiter="\t", duplicated=False):
