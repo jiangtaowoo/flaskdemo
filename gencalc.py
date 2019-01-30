@@ -37,6 +37,8 @@ def gen_exercise(minsum, maxsum, weights, plusrate=0.9, addinrate=0.8, mixrate=0
         while True:
             b = choose_num(weights)
             if excludes and b in excludes:
+                if sum(excludes)>16:
+                    addr = False
                 continue
             if op=="+":
                 if a+b>=minsum and a+b<=maxsum:
