@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 import os
-import transapi
 import json
-import gencalc
-import gencalc2
 import time
 import datetime
 import codecs
+import transapi
 import schemamgr
+import gencalc
+import gencalc2
 
 app = Flask(__name__)
 app.secret_key = 'welcome to jiangtaowu.com'
@@ -34,7 +34,8 @@ def process_trans(word):
 @app.route('/class1/<schema_name>', methods=['GET','POST'])
 def generate_math_exercise(schema_name=""):
     try:
-        schemas = [k for k in gencalc2.CALC_TEMPLATES["TEMPLATE_L1"]]
+        CALC_TEMPLATES = schemamgr.load_templates()
+        schemas = [k for k in CALC_TEMPLATES["TEMPLATE_L1"]]
         if not schema_name:
             schema_name = schemas[2]
         output = gencalc2.gen_exercise(schema_name)
