@@ -9,6 +9,16 @@ TEMPLATE_L1:
     L2: ADD_MINUS_20
     RATIO_CONCATE: 0
     TABLE: [25, 4]
+  ADD_MINUS_30_BASIC:
+    ALLOW_DUPLICATE: 0
+    L2: ADD_MINUS_30
+    RATIO_CONCATE: 0
+    TABLE: [25, 4]
+  ADD_MINUS_20_MIXED:
+    ALLOW_DUPLICATE: 0
+    L2: ADD_MINUS_20
+    RATIO_CONCATE: 0.3
+    TABLE: [25, 4]
   ADD_MINUS_20_FIXED:
     ALLOW_DUPLICATE: 0
     L2: ADD_MINUS_20
@@ -16,9 +26,9 @@ TEMPLATE_L1:
       35, 36, 37, 38, 39, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
       74, 75, 76, 77, 78, 79]
     TABLE: [25, 4]
-  ADD_MINUS_20_MIXED:
+  ADD_MINUS_30_MIXED:
     ALLOW_DUPLICATE: 0
-    L2: ADD_MINUS_20
+    L2: ADD_MINUS_30
     RATIO_CONCATE: 0.3
     TABLE: [25, 4]
 TEMPLATE_L2:
@@ -34,8 +44,18 @@ TEMPLATE_L2:
     NUM_MAX: 20
     NUM_MIN: 0
     RATIO_ADDIN: 0.8
-    RATIO_NUM: {0: 0, 1: 0, 2: 2, 3: 2, 4: 5, 5: 5, 6: 5, 7: 5, 8: 5, 9: 5, 10: 5,
-      11: 5, 12: 5, 13: 5, 14: 5, 15: 5, 16: 5, 17: 5, 18: 2, 19: 2, 20: 0}
+    RATIO_NUM: {0: 0, 1: 0, 2: 2, 3: 2, 4: 8, 5: 8, 6: 8, 7: 8, 8: 8, 9: 8, 10: 8,
+      11: 8, 12: 8, 13: 8, 14: 8, 15: 5, 16: 5, 17: 5, 18: 2, 19: 2, 20: 0}
     RATIO_OP: {'*': 0.0, +: 0.8, '-': 0.2, /: 0.0}
     RES_MAX: 20
+    RES_MIN: 4
+  ADD_MINUS_30:
+    NUM_MAX: 30
+    NUM_MIN: 0
+    RATIO_ADDIN: 0.8
+    RATIO_NUM: {0: 0, 1: 0, 2: 2, 3: 2, 4: 8, 5: 8, 6: 8, 7: 8, 8: 8, 9: 5, 10: 2,
+      11: 5, 12: 8, 13: 8, 14: 8, 15: 8, 16: 8, 17: 8, 18: 8, 19: 8, 20: 2, 21: 8,
+      22: 8, 23: 8, 24: 8, 25: 8, 26: 8, 27: 5, 28: 5, 29: 2, 30: 0}
+    RATIO_OP: {'*': 0.0, +: 0.8, '-': 0.2, /: 0.0}
+    RES_MAX: 30
     RES_MIN: 4

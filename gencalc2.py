@@ -4,7 +4,6 @@ import os
 import yaml
 import schemamgr
 
-CALC_TEMPLATES = schemamgr.load_templates()
 CLAC_OPERATIONS = {"+": lambda x, y: x+y,
     "-": lambda x,y: x-y,
     "*": lambda x,y: x*y,
@@ -60,7 +59,7 @@ def gen_exclude_dict(op, a, b):
         d["*"] = [b]
     return d
 
-def choose_another_number(templ_name, a, exclude_dict):
+def choose_another_number(CALC_TEMPLATES, templ_name, a, exclude_dict):
     if templ_name not in CALC_TEMPLATES["TEMPLATE_L2"]:
         return None
     thetempl = CALC_TEMPLATES["TEMPLATE_L2"][templ_name]
@@ -109,33 +108,33 @@ def choose_another_number(templ_name, a, exclude_dict):
         break
     return (op, a, b)
 
-def gen_single_expr(templ_name):
+def gen_single_expr(CALC_TEMPLATES, templ_name):
     if templ_name not in CALC_TEMPLATES["TEMPLATE_L2"]:
         return None
     thetempl = CALC_TEMPLATES["TEMPLATE_L2"][templ_name]
     num_ratio = thetempl["RATIO_NUM"]
     num_candidates = gen_default_candidates(num_ratio)
     a = choose_from_candidate(num_ratio, num_candidates)
-    res = choose_another_number(templ_name, a, None)
+    res = choose_another_number(CALC_TEMPLATES, templ_name, a, None)
     if res:
         op, a, b = res
         return "{0} {1} {2} =".format(a, op, b)
     return None
 
-def gen_concat_expr(templ_name):
+def gen_concat_expr(CALC_TEMPLATES, templ_name):
     if templ_name not in CALC_TEMPLATES["TEMPLATE_L2"]:
         return None
     thetempl = CALC_TEMPLATES["TEMPLATE_L2"][templ_name]
     num_ratio = thetempl["RATIO_NUM"]
     num_candidates = gen_default_candidates(num_ratio)
     a = choose_from_candidate(num_ratio, num_candidates)
-    res = choose_another_number(templ_name, a, None)
+    res = choose_another_number(CALC_TEMPLATES, templ_name, a, None)
     if res:
         op, a, b = res
         exclude_dict = gen_exclude_dict(op, a, b)
         if op in CLAC_OPERATIONS:
             newa = CLAC_OPERATIONS[op](a, b)
-            newres = choose_another_number(templ_name, newa, exclude_dict)
+            newres = choose_another_number(CALC_TEMPLATES, templ_name, newa, exclude_dict)
             if newres:
                 newop, c, d = newres
                 return "{0} {1} {2} {3} {4} =".format(a, op, b, newop, d)
@@ -143,6 +142,7 @@ def gen_concat_expr(templ_name):
     return None
 
 def gen_exercise(schema_name):
+    CALC_TEMPLATES = schemamgr.load_templates()
     if schema_name not in CALC_TEMPLATES["TEMPLATE_L1"]:
         return None
     theschema = CALC_TEMPLATES["TEMPLATE_L1"][schema_name]
@@ -166,18 +166,18 @@ def gen_exercise(schema_name):
         for j in range(col):
             while True:
                 if concat_type==0:
-                    res = gen_single_expr(templ_name)
+                    res = gen_single_expr(CALC_TEMPLATES, templ_name)
                 elif concat_type==1:
                     pos = i*4+j
                     if pos in concat_pos:
-                        res = gen_concat_expr(templ_name)
+                        res = gen_concat_expr(CALC_TEMPLATES, templ_name)
                     else:
-                        res = gen_single_expr(templ_name)
+                        res = gen_single_expr(CALC_TEMPLATES, templ_name)
                 elif concat_type==2:
                     if random.random()<concat_ratio:
-                        res = gen_concat_expr(templ_name)
+                        res = gen_concat_expr(CALC_TEMPLATES, templ_name)
                     else:
-                        res = gen_single_expr(templ_name)
+                        res = gen_single_expr(CALC_TEMPLATES, templ_name)
                 #本次是否成功
                 if not res:
                     continue
