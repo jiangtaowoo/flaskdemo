@@ -36,7 +36,7 @@ class WordTranslateResult(object):
     }
 
     def __init__(self):
-        self.ada = ormadaptor.AdaptorORM('dictmodel.yaml', 'vocabulary.db')
+        self.ada = ormadaptor.AdaptorORM(os.sep.join(["models","dictmodel.yaml"]), "vocabulary.db")
         self.vocabulary = {}   #vocabulary网站的解释
         self.word = ""         #单词本身
         self.wordem = ""       #读音分隔, 重音在哪

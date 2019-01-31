@@ -4,9 +4,11 @@ import os
 import transapi
 import json
 import gencalc
+import gencalc2
 import time
 import datetime
 import codecs
+import schemamgr
 
 app = Flask(__name__)
 app.secret_key = 'welcome to jiangtaowu.com'
@@ -29,20 +31,19 @@ def process_trans(word):
 提供20以内口算练习题自动生成服务
 """
 @app.route('/class1')
-@app.route('/class1/<maxsum>', methods=['GET','POST'])
-def generate_math_exercise(maxsum=20):
+@app.route('/class1/<schema_name>', methods=['GET','POST'])
+def generate_math_exercise(schema_name=""):
     try:
-        duplicated = False
-        if int(maxsum)==10:
-            minsum, maxsum = 5, 10
-            duplicated = True
-        else:
-            minsum, maxsum = 7, 20
-        output = gencalc.genexpr(minsum,maxsum,gencalc.weights[maxsum/10-1],None,duplicated)
+        schemas = [k for k in gencalc2.CALC_TEMPLATES["TEMPLATE_L1"]]
+        if not schema_name:
+            schema_name = schemas[2]
+        output = gencalc2.gen_exercise(schema_name)
         if request.method=='POST':
-            return render_template('exprblk.html', data_contents = output)
+            return render_template('grade1expr_block.html', data_contents = output)
         else:
-            return render_template('calc.html', defaultisten=maxsum==10, data_contents = output)
+            return render_template('grade1expr.html', CUR_SCHEMA_NAME = schema_name,
+                                   IN_SCHEMAS = schemas,
+                                   data_contents = output)
     except:
         return ""
 
@@ -70,7 +71,7 @@ def process_md():
                     outf.write(md.encode("utf-8"))
                 try:
                     return url_for("process_mdview", year=today[0],month=today[1],day=today[2],filename=filename)
-                except Exception, e:
+                except Exception as e:
                     session['error_msg_404'] = e
                     return url_for("process_404")
             else:
@@ -78,7 +79,7 @@ def process_md():
                 return url_for("process_404")
         else:
             return render_template('md.html', md_content="#Enjoy markdown editing", md_filename="your_filename")
-    except Exception, ee:
+    except Exception as ee:
         session['error_msg_404'] = ee
         return redirect(url_for("process_404"))
 
@@ -110,6 +111,42 @@ def process_404():
 def process_test():
     return render_template('test.html')
 """
+
+@app.route('/schemaeditor', methods=['GET'])
+def schema_editor():
+    if request.method == "GET":
+        schema_name = request.args.get('name', "")
+        if not schema_name:
+            return render_template("bootstrap_basic.html",
+                body_content=schemamgr.list_templates())
+        params = schemamgr.prepare_schema_params(schema_name)
+        return render_template("schemaeditor.html", **params)
+    else:
+        session['error_msg_404'] = "ONLY GET METHOD IS SUPPORT!"
+        return redirect(url_for("process_404"))
+
+@app.route('/templateeditor', methods=['GET', 'POST'])
+def template_editor():
+    if request.method == "GET":
+        templ_name = request.args.get('name', "")
+        if not templ_name:
+            return render_template("bootstrap_basic.html",
+                body_content=schemamgr.list_templates())
+        params = schemamgr.prepare_template_params(templ_name)
+        return render_template("templateeditor.html", **params)
+    elif request.method == "POST":
+        templ_name = request.form.get("name")
+        res = schemamgr.write_template(templ_name, request)
+        if res:
+            return render_template("bootstrap_basic.html",
+                body_content=schemamgr.list_templates())
+        else:
+            session['error_msg_404'] = "Unkown Error!"
+            return redirect(url_for("process_404"))
+    else:
+        session['error_msg_404'] = "Unkown Error!"
+        return redirect(url_for("process_404"))
+
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=8080, debug=True)

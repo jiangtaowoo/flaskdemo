@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <title>题型模板编辑器</title>
+        <!-- 引入 Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+        .container {
+          padding-right: 15px;
+          padding-left: 15px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+        .row {
+          margin-right: -15px;
+          margin-left: -15px;
+          padding-top: 3px;
+        }
+      </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row" >
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="margin-top: 6px;">
+                  <p class="text-left text-warning">Schema名称</p>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    <input id="schema_name" class="form-control input-md" type="text" value="{{ IN_SCHEMA_NAME }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <button id="submit_schema_btn" type="submit" class="btn btn-info">返回</button>
+                </div>
+            </div>
+            <div class="row"><hr></div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>引用的模板</label>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <select id="sel_template" class="form-control">
+                      {% for templ_name in IN_TEMPL_NAMES %}
+                          {% if templ_name == CUR_TEMPL_NAME %}
+                            <option value="{{ templ_name }}" selected>{{ templ_name }}</option>
+                          {% else %}
+                            <option value="{{ templ_name }}">{{ templ_name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                  </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>行数(row)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="schema_row_num" class="form-control input-sm" type="text" value="{{ IN_ROW_NUM }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>列数(column)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="schema_col_num" class="form-control input-sm" type="text" value="{{ IN_COL_NUM }}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>是否允许重复</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="schema_allow_dumplicate" class="form-control input-sm" type="text" value="{{ IN_ALLOW_DUPLICATE }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>连加连减概率</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="schema_concat_ratio" class="form-control input-sm" type="text" value="{{ IN_RATIO_CONCATE }}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>指定位置连加连减</label></div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    <input id="schema_concat_pos" class="form-control input-sm" type="text" value="{{ IN_POSITION_CONCATE }}"></input>
+                </div>
+            </div>
+        </div>
+
+        <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script>
+        $(document).ready(function(){
+          $("#submit_schema_btn").click(function(e){
+              e.preventDefault();
+              window.location.href = "/schemaeditor";
+              /*
+              $.ajax({type: "POST",
+                    url: "/schemaeditor",
+                    data: {"name": $("#schema_name").val(),
+                    "seltempl": $("#sel_template").val(),
+                    "table": $("#schema_row_num").val() + "," + $("#schema_col_num").val(),
+                    "allow_dup": $("#schema_allow_dumplicate").val(),
+                    "concat_r": $("#schema_concat_ratio").val(),
+                    "concat_pos": $("#schema_concat_pos").val()
+                  },
+                   success:function(response){
+              $("body").html(response); }
+            });*/
+          });
+        });
+        </script>
+    </body>
+</html>

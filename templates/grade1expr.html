@@ -15,14 +15,14 @@
                                 <div class="form-group">
                                         <div class="col-xs-0"></div>
                                         <div class="col-xs-8">
-                                                <select id="maxsum" class="form-control">
-                                                        {% if defaultisten %}
-                                                        <option value="10" selected>calculation max to 10</option>
-                                                        <option value="20" >calculation max to 20</option>
+                                                <select id="sel_schema" class="form-control">
+                                                    {% for schema_name in IN_SCHEMAS %}
+                                                        {% if schema_name == CUR_SCHEMA_NAME %}
+                                                            <option value="{{ schema_name }}" selected>{{ schema_name }}</option>
                                                         {% else %}
-                                                        <option value="10" >calculation max to 10</option>
-                                                        <option value="20"  selected>calculation max to 20</option>
+                                                            <option value="{{ schema_name }}">{{ schema_name }}</option>
                                                         {% endif %}
+                                                    {% endfor %}
                                                 </select>
                                         </div>
                                         <div class="col-xs-4">
@@ -53,9 +53,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
                 $(document).ready(function(){
-                        $("#maxsum").on('change', function(e){
+                        $("#sel_schema").on('change', function(e){
                                 $.ajax({type: "POST",
-                                        url: "/class1/" + $("#maxsum").val(),
+                                        url: "/class1/" + $("#sel_schema").val(),
                                         success: function(response) {
                                                 $("#expr_block").html(response);
                                         }});
@@ -63,7 +63,7 @@
                         $("#rexpr").click(function(e){
                                 e.preventDefault();
                                 $.ajax({type: "POST",
-                                        url: "/class1/" + $("#maxsum").val(),
+                                        url: "/class1/" + $("#sel_schema").val(),
                                         success: function(response) {
                                                 $("#expr_block").html(response);
                                         }});

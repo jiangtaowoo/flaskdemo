@@ -1,0 +1,188 @@
+<html>
+    <head>
+        <title>题型模板编辑器</title>
+        <!-- 引入 Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+        .container {
+          padding-right: 15px;
+          padding-left: 15px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+        .row {
+          margin-right: -15px;
+          margin-left: -15px;
+          padding-top: 3px;
+        }
+      </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row" >
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="margin-top: 6px;">
+                  <p class="text-left text-warning">模板名称</p>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    <input id="templ_name" class="form-control input-md" type="text" value="{{ IN_TEMPLATE_NAME }}"></input>
+                </div>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                  <button id="submit_templ_btn" type="submit" class="btn btn-danger">提交修改</button>
+                </div>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                  <button id="btn_return" type="button" class="btn btn-info">返回</button>
+            </div>
+            <div class="row"><hr></div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>候选数字下限(min)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="templ_num_min" class="form-control input-sm" type="text" value="{{ IN_NUM_MIN }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>候选数字上限(max)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="templ_num_max" class="form-control input-sm" type="text" value="{{ IN_NUM_MAX }}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>计算结果下限(res_min)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="templ_res_min" class="form-control input-sm" type="text" value="{{ IN_RES_MIN }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <label>结算结果上限(res_max)</label>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="templ_res_max" class="form-control input-sm" type="text" value="{{ IN_RES_MAX }}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>加法概率(+)</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="templ_op_plus" class="form-control input-sm" type="text" value="{{ IN_OP_PLUS }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>减法概率(-)</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="templ_op_minus" class="form-control input-sm" type="text" value="{{ IN_OP_MINUS }}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>乘法概率(*)</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="templ_op_mul" class="form-control input-sm" type="text" value="{{ IN_OP_MUL }}"></input>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>除法概率(/)</label></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <input id="templ_op_div" class="form-control input-sm" type="text" value="{{ IN_OP_DIV }}"></input>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+              <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><label>进位算式概率(+-适用)</label></div>
+              <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                  <input id="templ_addin" class="form-control input-sm" type="text" value="{{ IN_ADDIN }}"></input>
+              </div>
+            </div>
+            <div class="row"><hr></div>
+            <div id="input_fields_wrap" class="row">
+                {% if IN_CANDIDATE_NUMS %}
+                  <div id="input_fields_div" class="container">
+                  {% for candidate_x in IN_CANDIDATE_NUMS %}
+                    <div class="row">
+                      <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
+                      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><p class="text-danger">权重(数字 {{ candidate_x }})</p></div>
+                      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                          <input id="num_r_{{ candidate_x }}" class="form-control input-sm" type="text" value="{{ IN_RATIO_NUM[candidate_x] }}"></input>
+                      </div>
+                      <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script>
+        $(document).ready(function(){
+          var wrapper = $("#input_fields_wrap");
+
+          function generate_input_fields(nummin, nummax)
+          {
+            var input_html = '<div id="input_fields_div" class="container">';
+            for(var num=nummin;num<=nummax;num++)
+            {
+              input_html = input_html + '<div class="row">\
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>\
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><p class="text-danger">权重(数字 ' + num.toString() + ')</p></div>\
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">\
+                    <input id="num_r_' + num.toString() + '" class="form-control input-sm" type="text" value="1"></input>\
+                </div>\
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>\
+              </div>';
+            }
+            input_html = input_html + "</div>";
+            return input_html;
+          }
+
+          $("#templ_num_min").on('input', function(e){
+              e.preventDefault();
+              var nummin = parseInt($("#templ_num_min").val());
+              var nummax = parseInt($("#templ_num_max").val());
+              if(nummax>nummin) {
+                $("#input_fields_div").remove();
+                $(wrapper).append(generate_input_fields(nummin, nummax));}
+            });
+            $("#templ_num_max").on('input', function(e){
+                e.preventDefault();
+                var nummin = parseInt($("#templ_num_min").val());
+                var nummax = parseInt($("#templ_num_max").val());
+                if(nummax>nummin) {
+                  $("#input_fields_div").remove();
+                  $(wrapper).append(generate_input_fields(nummin, nummax));}
+              });
+          $("#submit_templ_btn").click(function(e){
+              e.preventDefault();
+              var ratio_num = new Array();
+              var num_min = parseInt($("#templ_num_min").val());
+              var num_max = parseInt($("#templ_num_max").val());
+              for(var i=num_min; i<=num_max; i++) {
+                ratio_num[i-num_min] = $("#num_r_"+i.toString()).val();
+              }
+              console.log(ratio_num);
+              $.ajax({type: "POST",
+                    url: "/templateeditor",
+                    data: {"name": $("#templ_name").val(),
+                    "num_min": num_min,
+                    "num_max": num_max,
+                    "res_min": parseInt($("#templ_res_min").val()),
+                    "res_max": parseInt($("#templ_res_max").val()),
+                    "op_plus": $("#templ_op_plus").val(),
+                    "op_minus": $("#templ_op_minus").val(),
+                    "op_mul": $("#templ_op_mul").val(),
+                    "op_div": $("#templ_op_div").val(),
+                    "addin": $("#templ_addin").val(),
+                    "ratio": ratio_num.toString()
+                  },
+                   success:function(response){
+              $("body").html(response); }
+            });
+          });
+          $("#btn_return").click(function(e){
+                window.location.href = "/templateeditor"
+            });
+        });
+        </script>
+    </body>
+</html>
