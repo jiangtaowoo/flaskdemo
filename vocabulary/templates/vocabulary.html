@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Vocabulary lookup</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- 引入 Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+        <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+        <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+        <style>
+            .card {
+                box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+                transition: 0.3s;
+                width: 100%;
+                border-radius: 5px;
+            }
+
+            .card:hover {
+                box-shadow: 0 2px 4px 0 rgba(200,0,0,0.4);
+            }
+
+            img {
+                border-radius: 5px 5px 0 0;
+            }
+
+            .container {
+                padding: 2px 16px;
+            }
+            .active-pink-4 input[type=text]:focus:not([readonly]) {
+                border: 1px solid #f48fb1;
+                box-shadow: 0 0 0 1px #f48fb1;
+            }
+            .active-pink-3 input[type=text] {
+                border: 1px solid #f48fb1;
+                box-shadow: 0 0 0 1px #f48fb1;
+            }
+            .active-purple-4 input[type=text]:focus:not([readonly]) {
+                border: 1px solid #ce93d8;
+                box-shadow: 0 0 0 1px #ce93d8;
+            }
+            .active-purple-3 input[type=text] {
+                border: 1px solid #ce93d8;
+                box-shadow: 0 0 0 1px #ce93d8;
+            }
+            .active-cyan-4 input[type=text]:focus:not([readonly]) {
+                border: 1px solid #4dd0e1;
+                box-shadow: 0 0 0 1px #4dd0e1;
+            }
+            .active-cyan-3 input[type=text] {
+                border: 1px solid #4dd0e1;
+                box-shadow: 0 0 0 1px #4dd0e1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+          <div class="row">
+          <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div>
+            <form id="prj_form_grp" class="form-horizontal" role="form">
+                <!--div class="form-group"-->
+                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <select id="sel_schema" class="form-control">
+                                {% for schema_name in IN_SCHEMAS %}
+                                    {% if schema_name == CUR_SCHEMA_NAME %}
+                                        <option value="{{ schema_name }}" selected>{{ schema_name }}</option>
+                                    {% else %}
+                                        <option value="{{ schema_name }}">{{ schema_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                        <div class="active-cyan-4 mb-4">
+                            <input id="w_to_query" class="form-control text-center" type="text" placeholder="Search" aria-label="Search">
+                        </div>
+                    </div>
+                <!--/div-->
+            </form>
+          </div>
+          </div>
+        </div>
+        <br>
+        <div id="card_data" class="container">
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>
+          $(document).ready(function(){
+            $("#prj_form_grp").submit(function(event){
+                event.preventDefault();
+                });
+            $("#w_to_query").keyup(function(e){
+                e.preventDefault();
+                if(e.keyCode==13 || (e.key=="*" && $("#w_to_query").val().length>1 )) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/vocabulary/",
+                        data: {"word": $("#w_to_query").val()},
+                        success: function(response) {
+                          $("#card_data").html(response);
+                  }
+                });
+              }
+            });
+          });
+        </script>
+    </body>
+</html>

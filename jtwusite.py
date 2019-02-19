@@ -5,27 +5,24 @@ import json
 import time
 import datetime
 import codecs
-import transapi
 import schemamgr
-import gencalc
 import gencalc2
+import vocabulary
 
-app = Flask(__name__)
-app.secret_key = 'welcome to jiangtaowu.com'
-app.config['SESSION_TYPE'] = 'filesystem'
-trans_obj = transapi.BDTranslation()
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = 'welcome to jiangtaowu.com'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    #app.config.from_object(config_class)
+    #app.config.from_object('config')
+    #db.init_app(app)
+    #migrate.init_app(app, db)
+    #app.register_blueprint(vocabulary.bp_vocabulary)
+    vocabulary.init_app(app)
+    return app
 
-"""
-提供英文单词翻译服务
-"""
-@app.route('/vocabulary/<word>')
-def process_trans(word):
-    try:
-        res = trans_obj.single_translate(word)
-        res['status'] = 'success'
-        return jsonify(res)
-    except:
-        return jsonify({'status':'fail'})
+app = create_app()
+
 
 """
 提供20以内口算练习题自动生成服务
@@ -150,4 +147,4 @@ def template_editor():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=8080, debug=True)
+   app.run(host='0.0.0.0', port=8080)

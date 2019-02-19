@@ -5,21 +5,21 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from collections import OrderedDict
+import six
 
 
 class AdaptorORM(object):
     def __init__(self, modelname, dbname):
         app_base_dir = os.path.dirname(os.path.abspath(__file__))
         self._models_cfg = None
-        self._db_name = os.path.sep.join([app_base_dir, dbname])
+        self._db_name = dbname if os.sep in dbname else os.sep.join([app_base_dir, dbname])
         self._tb_name_exists = []
         self.bTbCreated = False
         self.engine=create_engine("sqlite:///" + self._db_name)
         self.DBSession = sessionmaker(bind=self.engine)
         self.BaseCls = declarative_base()
         self.DBOrmCls = dict()
-        self._load_model_config(os.path.sep.join([app_base_dir,
-                                              modelname]))
+        self._load_model_config(modelname if os.sep in modelname else os.sep.join([app_base_dir, modelname]))
 
     def close_database(self):
         pass
@@ -32,7 +32,7 @@ class AdaptorORM(object):
             for colname in modelcfg['PK']:
                 member_dict[colname] = Column(String, primary_key=True)
         if 'cols' in modelcfg:
-            for colname, colrequires in modelcfg['cols'].iteritems():
+            for colname, colrequires in six.iteritems(modelcfg['cols']):
                 if colname in modelcfg['PK']:
                     continue
                 if isinstance(colrequires,list) or int(colrequires)>0:
@@ -45,7 +45,7 @@ class AdaptorORM(object):
         if modelname in self._models_cfg:
             if 'cols' in modelcfg:
                 valid_data = dict()
-                for k, v in kwargs.iteritems():
+                for k, v in six.iteritems(kwargs):
                     if k in modelcfg['cols']:
                         valid_data[k] = v if not isinstance(v, str) else v.decode('utf-8')
                 return valid_data
@@ -56,14 +56,14 @@ class AdaptorORM(object):
             model_cfgs = yaml.load(open(model_yaml_config_filepath))
             #define DBORM Class
             self.DBOrmCls = dict()
-            for modelname, modelcfg in model_cfgs.iteritems():
+            for modelname, modelcfg in six.iteritems(model_cfgs):
                 self.DBOrmCls[modelname] = self._create_db_model(self.BaseCls, modelname, modelcfg)
             self.BaseCls.metadata.create_all(self.engine)
             self._models_cfg = model_cfgs
 
     def save(self, **kwargs):
         #只处理第一个model
-        for modelname, modelcfg in self._models_cfg.iteritems():
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
             self.save_data(modelname, modelcfg, **kwargs)
             break
 
@@ -83,7 +83,7 @@ class AdaptorORM(object):
             session = self.DBSession()
             modelObj = session.query(self.DBOrmCls[modelname]).filter_by(**pk_data_d).first()
             if modelObj:
-                for k, v in kwargs.iteritems():
+                for k, v in six.iteritems(kwargs):
                     if k not in pk_data_d:
                         if hasattr(modelObj, k):
                             setattr(modelObj, k, v if not isinstance(v, str) else v.decode('utf-8'))
@@ -92,7 +92,7 @@ class AdaptorORM(object):
 
     def exists(self, **kwargs):
         #只处理第一个model
-        for modelname, modelcfg in self._models_cfg.iteritems():
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
             return self.data_exists(modelname, modelcfg, **kwargs)
 
     def data_exists(self, modelname, modelcfg, **kwargs):
@@ -113,10 +113,10 @@ class AdaptorORM(object):
     #根据kwargs里的过滤条件, 找到对应的数据(所有列)返回
     def load(self, **kwargs):
         #只处理第一个model
-        for modelname, modelcfg in self._models_cfg.iteritems():
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
             tablename = modelcfg['tablename']
             fieldslist = []
-            for k, v in modelcfg['cols'].iteritems():
+            for k, v in six.iteritems(modelcfg['cols']):
                 fieldslist.append(k)
             return self.load_data(tablename, fieldslist, **kwargs)
 
@@ -138,7 +138,7 @@ class AdaptorORM(object):
         #find dest model
         dst_modelname = ''
         dst_modelcfg = ''
-        for modelname, modelcfg in self._models_cfg.iteritems():
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
             if tablename == modelcfg['tablename']:
                 dst_modelname = modelname
                 dst_modelcfg = modelcfg
@@ -150,8 +150,8 @@ class AdaptorORM(object):
         #逐个将kwargs展开, 使用filter函数实现查询, 容纳like类型的查询
         ClsInst = self.DBOrmCls[dst_modelname]
         rule = []
-        for k, v in kwargs.iteritems():
-            if len(v)>2 and v[0]=='%' and v[-1]=='%':
+        for k, v in six.iteritems(kwargs):
+            if len(v)>2 and '%' in v:
                 likefunc = getattr(getattr(ClsInst,k),"like")
                 rule.append(likefunc(v))
             else:

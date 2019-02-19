@@ -1,0 +1,14 @@
+{% for card in card_list %}
+  <div class="row">
+  <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div>
+  <div class="col-xs-* col-sm-* col-md-* col-lg-10">
+      <div class="card">
+        <!--img src="tom.jpg" alt="Avatar" style="width:100%"-->
+        <div class="container-fluid">
+          {{ card|safe }}
+        </div>
+      </div>
+  </div>
+  </div>
+  <div class="row" style="height: 8px"></div>
+{% endfor %}
