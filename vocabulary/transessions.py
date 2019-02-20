@@ -397,12 +397,12 @@ class WordTranslateResult(object):
                 k = 'definition'
             if k:
                 back.append(u'<br>{0}VOCABULARY{1}'.format(html_panel_head,html_panel_tail))
-                vocabulary_raw = u'{0}VOCABULARY{1}'.format("<br><b>","</b><br>")
+                #vocabulary_raw = u'{0}VOCABULARY{1}'.format("<br><b>","</b><br>")
                 vocab_v = _pretty_str_format(self.vocabulary[k])
                 vocab_v = re.sub(r'(<br>\s*)+', '<br>', vocab_v)
                 #back.append('<hr>' + vocab_v + '<hr>')
                 back.append(vocab_v)
-                res_dict['vocabulary'] = vocabulary_raw + vocab_v
+                res_dict['vocabulary'] = vocab_v
         #第六行, 各词典解释及例句
         if self.means:
             dictname = {'oxford': u'<br>{0}牛津词典{1}'.format(html_panel_head,html_panel_tail),
