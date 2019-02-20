@@ -279,18 +279,25 @@ class WordTranslateResult(object):
         def _gen_htmlcard_impl():
             cardata = self.gen_flashcard_data()
             cardata.pop('back')
+            keys = ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'mean', 'vocabulary', 'oxford', 'collins', 'enmean']
+            for k in keys:
+                if k not in cardata:
+                    cardata[k] = ""
+            return cardata
+            """
             return u"<b>{0}</b>{1}{2}{3}{4}{5}".format(cardata['front'],
                     cardata['posp'] if "posp" in cardata else "",
                     cardata['basic'] if "basic" in cardata else "",
                     cardata['mean'] if "mean" in cardata else "",
                     cardata['vocabulary'] if 'vocabulary' in cardata else "",
                     cardata['oxford'] if "oxford" in cardata else "")
+            """
         cboper=[_gen_htmlcard_impl]
         res = self.export_db(filters, cboper=cboper)
         if res:
             return cboper[1]
         else:
-            return ""
+            return []
 
     #生成flashcard内容
     def make_flashcard(self):

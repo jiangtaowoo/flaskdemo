@@ -1,112 +1,226 @@
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Vocabulary lookup</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- 引入 Bootstrap -->
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-        <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
-        <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
-        <!--[if lt IE 9]>
-         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-        <style>
-            .card {
-                box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
-                transition: 0.3s;
-                width: 100%;
-                border-radius: 5px;
-            }
-
-            .card:hover {
-                box-shadow: 0 2px 4px 0 rgba(200,0,0,0.4);
-            }
-
-            img {
-                border-radius: 5px 5px 0 0;
-            }
-
-            .container {
-                padding: 2px 16px;
-            }
-            .active-pink-4 input[type=text]:focus:not([readonly]) {
-                border: 1px solid #f48fb1;
-                box-shadow: 0 0 0 1px #f48fb1;
-            }
-            .active-pink-3 input[type=text] {
-                border: 1px solid #f48fb1;
-                box-shadow: 0 0 0 1px #f48fb1;
-            }
-            .active-purple-4 input[type=text]:focus:not([readonly]) {
-                border: 1px solid #ce93d8;
-                box-shadow: 0 0 0 1px #ce93d8;
-            }
-            .active-purple-3 input[type=text] {
-                border: 1px solid #ce93d8;
-                box-shadow: 0 0 0 1px #ce93d8;
-            }
-            .active-cyan-4 input[type=text]:focus:not([readonly]) {
-                border: 1px solid #4dd0e1;
-                box-shadow: 0 0 0 1px #4dd0e1;
-            }
-            .active-cyan-3 input[type=text] {
-                border: 1px solid #4dd0e1;
-                box-shadow: 0 0 0 1px #4dd0e1;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-          <div class="row">
-          <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div>
+<head>
+    <meta charset="utf-8" />
+    <title>Vocabulary lookup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 100%;
+            border-radius: 5px;
+        }
+        .card:hover {
+            box-shadow: 0 2px 4px 0 rgba(200,0,0,0.4);
+        }
+        .active-pink-4 input[type=text]:focus:not([readonly]) {
+            border: 1px solid #f48fb1;
+            box-shadow: 0 0 0 1px #f48fb1;
+        }
+        .active-pink-3 input[type=text] {
+            border: 1px solid #f48fb1;
+            box-shadow: 0 0 0 1px #f48fb1;
+        }
+        .active-purple-4 input[type=text]:focus:not([readonly]) {
+            border: 1px solid #ce93d8;
+            box-shadow: 0 0 0 1px #ce93d8;
+        }
+        .active-purple-3 input[type=text] {
+            border: 1px solid #ce93d8;
+            box-shadow: 0 0 0 1px #ce93d8;
+        }
+        .active-cyan-4 input[type=text]:focus:not([readonly]) {
+            border: 1px solid #4dd0e1;
+            box-shadow: 0 0 0 1px #4dd0e1;
+        }
+        .active-cyan-3 input[type=text] {
+            border: 1px solid #4dd0e1;
+            box-shadow: 0 0 0 1px #4dd0e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div>
             <form id="prj_form_grp" class="form-horizontal" role="form">
                 <!--div class="form-group"-->
                     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                            <select id="sel_schema" class="form-control">
-                                {% for schema_name in IN_SCHEMAS %}
-                                    {% if schema_name == CUR_SCHEMA_NAME %}
-                                        <option value="{{ schema_name }}" selected>{{ schema_name }}</option>
-                                    {% else %}
-                                        <option value="{{ schema_name }}">{{ schema_name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
+                        <select id="app-sel-schema" class="form-control" v-model="selected" v-on:change="refreshCardView">
+                            {% raw %}
+                            <option v-for="option in options" v-bind:value="option.value">
+                                {{ option.text }}
+                            </option>
+                            {% endraw %}
+                        </select>
                     </div>
                     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                         <div class="active-cyan-4 mb-4">
-                            <input id="w_to_query" class="form-control text-center" type="text" placeholder="Search" aria-label="Search">
+                            <input id="app-word-query" v-model="word" v-on:keyup="queryVocabularyCard" class="form-control text-center" type="text" placeholder="input word to search" aria-label="Search">
                         </div>
                     </div>
                 <!--/div-->
             </form>
-          </div>
-          </div>
         </div>
-        <br>
-        <div id="card_data" class="container">
+    </div>
+    <br>
+    <div id="app-card-data" class="container">
+        <vocabulary-card v-for="(vcard,vindex) in cards" v-bind:vindex="vindex+1" v-bind:key="vcard.front" v-bind:vcard="vcard" v-bind:viewopt="viewschema"></vocabulary-card>
+    </div>
+</body>
+
+<template id="template-vcard">
+    <div class="vocabulary">
+        <div class="row">
+            {% raw %}
+            <!--div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div-->
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+            <div class="col-xs-* col-sm-* col-md-* col-lg-10">
+                <div class="card">
+                    <div class="container-fluid">
+                        <b v-if="viewopt.front">{{ vindex }} &nbsp; {{ vcard.front }}</b>
+                        <span v-if="viewopt.posp" v-html="vcard.posp"></span>
+                        <span v-if="viewopt.audio" v-html="vcard.audio"></span>
+                        <span v-if="viewopt.transform" v-html="vcard.transform"></span>
+                        <span v-if="viewopt.tag" v-html="vcard.tag"></span>
+                        <span v-if="viewopt.basic" v-html="vcard.basic"></span>
+                        <span v-if="viewopt.mean" v-html="vcard.mean"></span>
+                        <span v-if="viewopt.vocabulary" v-html="vcard.vocabulary"></span>
+                        <span v-if="viewopt.oxford" v-html="vcard.oxford"></span>
+                        <span v-if="viewopt.collins" v-html="vcard.collins"></span>
+                        <span v-if="viewopt.enmean" v-html="vcard.enmean"></span>
+                    </div>
+                </div>
+            </div>
+            {% endraw %}
         </div>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script>
-          $(document).ready(function(){
-            $("#prj_form_grp").submit(function(event){
-                event.preventDefault();
-                });
-            $("#w_to_query").keyup(function(e){
-                e.preventDefault();
-                if(e.keyCode==13 || (e.key=="*" && $("#w_to_query").val().length>1 )) {
+        <div class="row" style="height: 8px"></div>
+    </div>
+</template>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script>
+    var g_schemas = {"default": ['front', 'posp', 'transform', 'basic', 'mean', 'vocabulary', 'oxford'],
+    "simple": ['front', 'posp', 'basic', 'mean'],
+    "vocabulary": ['front', 'posp', 'basic', 'mean', 'vocabulary'],
+    "oxford": ['front', 'posp', 'basic', 'mean', 'oxford'],
+    "collins": ['front', 'posp', 'basic', 'mean', 'collins'],
+    "full": ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'mean', 'vocabulary', 'oxford', 'collins', 'enmean']};
+
+    var g_schemaView = {'front':false, 'posp':false, 'audio':false, 'transform':false, 'tag':false, 'basic':false, 'mean':false, 'vocabulary':false, 'oxford':false, 'collins':false, 'enmean':false};
+
+    function setViewOptionBySchema(schema_name, schemaViewDict){
+        if (schema_name in g_schemas){
+            schema_view_list = g_schemas[schema_name];
+            for (name in schemaViewDict){
+                if (schema_view_list.indexOf(name)>=0) {
+                    schemaViewDict[name] = true;
+                } else {
+                    schemaViewDict[name] = false;
+                }
+            }
+        }
+    };
+
+    setViewOptionBySchema("default", g_schemaView);
+
+    //prevent Default submit action
+    $(document).ready(function(){
+        $("#prj_form_grp").submit(function(event){
+            event.preventDefault();
+            });
+    });
+
+    //component register
+    Vue.component('vocabulary-card', {
+        props: {
+            vindex: Number,
+            vcard: Object,
+            viewopt: Object
+        },
+        template: '#template-vcard'
+    });
+
+    //app-cards instantiate
+    var app_cards = new Vue({
+        el: '#app-card-data',
+        data: {
+            cards: [],
+            viewschema: g_schemaView
+        }
+    });
+
+    //app-select instantiate
+    var app_sel = new Vue({
+        el: '#app-sel-schema',
+        data: {
+            selected: 'default'
+        },
+        computed: {
+            options: function () {
+                var op_list = [];
+                for (opname in g_schemas){
+                    op_list.push({"text":opname, "value":opname});
+                }
+                return op_list;
+            }
+        },
+        methods: {
+            refreshCardView: function() {
+                setViewOptionBySchema(this.selected, g_schemaView)
+                Vue.set(app_cards, "viewschema", g_schemaView)
+            }
+        }
+    });
+
+    //app-input instantiate
+    var app_input = new Vue({
+        el: '#app-word-query',
+        data: {
+            word: ''
+        },
+        watch: {
+            // 如果 `word` 发生改变，这个函数就会运行
+            word: function (newWord, oldWord) {
+                this.debouncedGetVCard()
+                }
+        },
+        created: function () {
+            // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+            // 在这个例子中，我们希望限制访问 vocabulary/api 的频率
+            this.debouncedGetVCard = _.debounce(this.queryVocabularyCard, 500)
+        },
+        methods: {
+            queryVocabularyCard: function (event) {
+                if (event && this.word.length>2 && (event.key=="Enter" || event.key=="*")) {
+                    axios.post('/vocabulary/', {
+                        word: this.word
+                    })
+                    .then(function (response) {
+                        app_cards.cards = response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                    /*
                     $.ajax({
                         type: "POST",
                         url: "/vocabulary/",
-                        data: {"word": $("#w_to_query").val()},
+                        data: {"word": this.word},
                         success: function(response) {
-                          $("#card_data").html(response);
-                  }
-                });
-              }
-            });
-          });
-        </script>
-    </body>
+                            app_cards.cards = response;
+                        }
+                    });
+                    */
+                }
+            }
+        }
+    });
+</script>
 </html>

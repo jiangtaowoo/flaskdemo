@@ -9,14 +9,22 @@ trans_sess = transession()
 def lookup_word():
     if request.method=="POST":
         pattern = request.form.get('word')
+        if not pattern:
+            jcontent = request.json
+            if jcontent and 'word' in jcontent:
+                pattern = jcontent['word']
         cards = trans_sess.query(pattern.strip())
         #print(url_for("vocabulary.lookup_word"))
-        return render_template("card_block.html", card_list=cards)
+        return jsonify(cards)
+        #return render_template("card_block.html", card_list=cards)
     else:
+        """
         cards = []
         schemas = ["default", "simple", "vocabulary", "oxford", "full"]
         cur_schema= "default"
-        return render_template("vocabulary.html", CUR_SCHEMA_NAME=cur_schema, IN_SCHEMAS=schemas)
+        """
+        #return render_template("testx.html")
+        return render_template("vocabulary.html")
 
 @vocabulary_bp.route('/<word>', methods=['GET'])
 def trans_word(word):
