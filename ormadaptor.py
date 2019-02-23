@@ -61,12 +61,6 @@ class AdaptorORM(object):
             self.BaseCls.metadata.create_all(self.engine)
             self._models_cfg = model_cfgs
 
-    def save(self, **kwargs):
-        #只处理第一个model
-        for modelname, modelcfg in six.iteritems(self._models_cfg):
-            self.save_data(modelname, modelcfg, **kwargs)
-            break
-
     def save_data(self, modelname, modelcfg, **kwargs):
         if modelname in self._models_cfg:
             tbname = self._models_cfg[modelname]['tablename']
@@ -90,11 +84,6 @@ class AdaptorORM(object):
                 session.commit()
             session.close()
 
-    def exists(self, **kwargs):
-        #只处理第一个model
-        for modelname, modelcfg in six.iteritems(self._models_cfg):
-            return self.data_exists(modelname, modelcfg, **kwargs)
-
     def data_exists(self, modelname, modelcfg, **kwargs):
         session = self.DBSession()
         if modelname in self._models_cfg:
@@ -109,16 +98,6 @@ class AdaptorORM(object):
                 return False
         session.close()
         return False
-
-    #根据kwargs里的过滤条件, 找到对应的数据(所有列)返回
-    def load(self, **kwargs):
-        #只处理第一个model
-        for modelname, modelcfg in six.iteritems(self._models_cfg):
-            tablename = modelcfg['tablename']
-            fieldslist = []
-            for k, v in six.iteritems(modelcfg['cols']):
-                fieldslist.append(k)
-            return self.load_data(tablename, fieldslist, **kwargs)
 
     def load_data(self, tablename, fieldslist, **kwargs):
         #parse field list [col1, col2, [col3, col3_as_new_name], col4]
@@ -164,3 +143,41 @@ class AdaptorORM(object):
                 dataset.append(datarow)
         session.close()
         return fieldnameass, dataset
+
+    """
+    API for first model in yaml file
+    1. exists
+    2. load
+    3. save
+    4. update
+    """
+    def exists(self, **kwargs):
+        #只处理第一个model
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
+            return self.data_exists(modelname, modelcfg, **kwargs)
+
+    #根据kwargs里的过滤条件, 找到对应的数据(所有列)返回
+    def load(self, **kwargs):
+        #只处理第一个model
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
+            tablename = modelcfg['tablename']
+            fieldslist = []
+            for k, v in six.iteritems(modelcfg['cols']):
+                fieldslist.append(k)
+            return self.load_data(tablename, fieldslist, **kwargs)
+
+    def save(self, **kwargs):
+        #只处理第一个model
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
+            self.save_data(modelname, modelcfg, **kwargs)
+            break
+
+    """
+    pk_data_d:  可以定位唯一一行数据的过滤条件, 如 {pk_col_name = 'the pk value'}
+    如果给出的条件可以找到多条记录, 则只更新第一条记录内容
+    kwargs: 是更新后的数据, PK主键对应的列不更新
+    """
+    def update(self, pk_data_d, **kwargs):
+        #只处理第一个model
+        for modelname, modelcfg in six.iteritems(self._models_cfg):
+            self.update_data(modelname, modelcfg, pk_data_d, **kwargs)
