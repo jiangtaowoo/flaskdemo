@@ -602,9 +602,11 @@ class WordTranslateResult(object):
             return posp
         #posp
         if self.basicmean:
-            posp = set()
+            posp = []
             for bmean in self.basicmean:
-                posp.add(_get_std_posp(bmean['posp']))
+                pitem = _get_std_posp(bmean['posp'])
+                if pitem not in posp:
+                    posp.append(pitem)
             if posp:
                 basicd["posp"] = list(posp)
         #basic
