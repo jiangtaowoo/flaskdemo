@@ -32,7 +32,7 @@ SHARED_STYLE:
     HTML_BOLD_RED: "<b style='color:red'>{0}</b>"
     HTML_BOOTSTRAP_DIV: "<div class='container'>{0}</div>"
     HTML_BOOTSTRAP_DIV_LEFT: "<div class='container'>{0}"
-    HTML_BOOTSTRAP_DIV_RIGHT: "&nbsp;{0}</div>"
+    HTML_BOOTSTRAP_DIV_RIGHT: " {0}</div>"
     HTML_BOOTSTRAP_PANEL_TITLE: "<div class='panel panel-info'><div class='panel-heading'><h4 class='panel-title text-center'>{0}</h4></div></div>"
     HTML_BOOTSTRAP_PANEL_FORDICT: "<div class='panel panel-success'><div class='panel-heading'><h3 class='panel-title'>{0}</h3></div></div>"
 SCHEMAS:
