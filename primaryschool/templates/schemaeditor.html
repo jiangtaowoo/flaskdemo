@@ -91,20 +91,7 @@
         $(document).ready(function(){
           $("#submit_schema_btn").click(function(e){
               e.preventDefault();
-              window.location.href = "/schemaeditor";
-              /*
-              $.ajax({type: "POST",
-                    url: "/schemaeditor",
-                    data: {"name": $("#schema_name").val(),
-                    "seltempl": $("#sel_template").val(),
-                    "table": $("#schema_row_num").val() + "," + $("#schema_col_num").val(),
-                    "allow_dup": $("#schema_allow_dumplicate").val(),
-                    "concat_r": $("#schema_concat_ratio").val(),
-                    "concat_pos": $("#schema_concat_pos").val()
-                  },
-                   success:function(response){
-              $("body").html(response); }
-            });*/
+              window.location.href = "/school/schema";
           });
         });
         </script>

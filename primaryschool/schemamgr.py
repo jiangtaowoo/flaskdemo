@@ -93,11 +93,11 @@ def list_templates():
         #list all schema
         html = ['<h1 align="center">Schemas</h1>']
         for k in thetemplates["TEMPLATE_L1"]:
-            html.append('<h3 align="center"><a href="/schemaeditor?name={0}">{1}</a></h3>'.format(k,k))
+            html.append('<h3 align="center"><a href="/school/schema?name={0}">{1}</a></h3>'.format(k,k))
         #list all templates
         html.append('<hr><h1 align="center">Templates</h1>')
         for k in thetemplates["TEMPLATE_L2"]:
-            html.append('<h3 align="center"><a href="/templateeditor?name={0}">{1}</a></h3>'.format(k,k))
+            html.append('<h3 align="center"><a href="/school/template?name={0}">{1}</a></h3>'.format(k,k))
         return ''.join(html)
     else:
         return '<h1 align="center">No Schema or Template Exists!</h1>'
