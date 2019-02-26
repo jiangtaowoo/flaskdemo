@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, url_for, redirect, sessio
 import exercisegenerator as exegen
 import schemamgr
 
-primaryschool_bp = Blueprint("class", __name__, template_folder="templates")
+primaryschool_bp = Blueprint("school", __name__, template_folder="templates")
 
 @primaryschool_bp.route('/schema', methods=['GET'])
 def schema_editor():
@@ -56,5 +56,5 @@ def generate_math_exercise(schema_name=""):
             return render_template('grade1expr.html', CUR_SCHEMA_NAME = schema_name,
                                    IN_SCHEMAS = schemas,
                                    data_contents = output)
-    except:
-        return jsonify(["Unknow Error!"])
+    except Exception as e:
+        return jsonify({"error": e})
