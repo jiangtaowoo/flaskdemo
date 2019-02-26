@@ -57,4 +57,4 @@ def generate_math_exercise(schema_name=""):
                                    IN_SCHEMAS = schemas,
                                    data_contents = output)
     except Exception as e:
-        return jsonify({"error": e})
+        return jsonify(["Unknown error!"])

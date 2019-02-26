@@ -7,7 +7,8 @@ import yaml
 """
 def load_templates():
     #开始加载配置
-    filename = os.sep.join([".","models","calcmodel.yaml"])
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    filename = os.sep.join([cur_dir,"models","calcmodel.yaml"])
     if os.path.exists(filename):
         templs = yaml.load(open(filename))
         return templs
