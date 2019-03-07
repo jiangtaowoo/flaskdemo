@@ -594,7 +594,9 @@ class WordTranslateResult(object):
         #筛选条件为k,v格式, 例如  tags='%CET4%', 会筛选 tags列包含CET4的数据, 条件为与关系
         def uncap_data(attr, x):
             if attr in self.__iterable_attrs__:
-                return json.loads(x)
+                if x:
+                    return json.loads(x)
+                return None
             return x
         def set_datarow(fieldnames, datarow):
             for idx, field in enumerate(fieldnames):
