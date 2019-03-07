@@ -15,6 +15,7 @@ from requests.models import Response as ReqResponse
 import baidufy_sign
 import sys
 from metacls import Singleton
+from urllib import unquote
 
 sys.path.insert(1, os.path.join(sys.path[0],'..'))
 import ormadaptor
@@ -314,10 +315,10 @@ class WordTranslateResult(object):
     __attrs__ = [
         'word', 'wordem', 'ph_am', 'ph_en', 'tags',
         'word_third', 'word_done', 'word_pl', 'word_est', 'word_ing',
-        'word_er', 'word_past', 'mean', 'sentence', 'basicmean', 'means', 'enmeans', 'vocabulary'
+        'word_er', 'word_past', 'mean', 'sentence', 'basicmean', 'means', 'enmeans', 'vocabulary', 'dictcnstat'
     ]
     __pk_attrs__ = ['word']
-    __iterable_attrs__ = ['basicmean', 'means', 'enmeans', 'vocabulary']
+    __iterable_attrs__ = ['basicmean', 'means', 'enmeans', 'vocabulary', 'dictcnstat']
     __exchange_attrs__ = {'word_third': u'第三人称单数', 'word_done': u'过去分词',
                         'word_pl': u'复数', 'word_est': u'EST',
                         'word_ing': u'现在分词', 'word_er': u'ER',
@@ -349,6 +350,7 @@ class WordTranslateResult(object):
         self.pospkeys = {"adj":"adj", "adv":"adv", "n":"noun", "v":"verb"}
         self.pospstyles = {"adj":"warning", "adv":"info", "noun":"danger", "verb":"success"}
         #[{'noun':[{tr, example, similar_word},{}]}]
+        self.dictcnstat = {}   #海词词典统计
 
 
     #vocabulary结果, 结果保存在self.vocabulary
@@ -408,6 +410,31 @@ class WordTranslateResult(object):
         except Exception as e:
             trans_log(u"parse vocabulary rsp except {0}".format(e))
             return None
+
+    #提取海词词典频率统计
+    def parse_dictcn_rsp(self, rsp):
+        def _get_stat(html, eid):
+            divs = html.xpath("//div[@id='{0}']".format(eid))
+            if divs:
+                return json.loads(unquote(divs[0].attrib["data"]))
+            return None
+        try:
+            if isinstance(rsp, ReqResponse) and rsp.status_code==200:
+                html = lxml.html.fromstring(rsp.text)
+                self.dictcnstat = {}
+                stat_basic = _get_stat(html, "dict-chart-basic")
+                if stat_basic:
+                    self.dictcnstat["basic"] = stat_basic
+                stat_posp = _get_stat(html, "dict-chart-examples")
+                if stat_posp:
+                    self.dictcnstat["posp"] = stat_posp
+                return True
+            else:
+                return False
+        except Exception as e:
+            trans_log(u"parse vocabulary rsp except {0}".format(e))
+            return None
+            
 
     #从响应结构体中提取翻译结果
     def parse_baidu_rsp(self, rsp):
@@ -663,10 +690,12 @@ class WordTranslateResult(object):
         renderer = VCardRenderer()
         schema_name = "anki_card"
         res_dict = renderer.render(self, schema_name)
+        def _secure_back(back_html):
+            return back_html.replace("?","？").replace("&"," ")
         html_head = u"<html><head><meta charset='utf-8' />\
             <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\
             <link href='https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>\
-            <style>\nhtml a.audio {\ntext-decoration: none !important;\nfont-size: 18px;\npadding: 0 0 0 .75em;\ncursor: pointer;\n}</style>\
+            <style> html a.audio { text-decoration: none !important; font-size: 22px; padding: 0 0 0 .75em; cursor: pointer;}</style>\
             </head><body>"
         html_tail = u"</body></html>"
         back = html_head + \
@@ -681,7 +710,7 @@ class WordTranslateResult(object):
             res_dict["collins"] + \
             res_dict["enmean"] + \
             html_tail
-        res_dict["back"] = back
+        res_dict["back"] = _secure_back(back)
         return res_dict
 
     #生成flashcard内容
@@ -698,6 +727,7 @@ class BDTranslation(object):
         self.sess = requests.session()
         self.req_dict = dict()
         self.req_dict_v = dict()
+        self.req_dict_s = dict()
 
     def __enter__(self):
         return self
@@ -712,7 +742,9 @@ class BDTranslation(object):
         headers = {'Host': 'fanyi.baidu.com', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/63.0.3239.84 Chrome/63.0.3239.84 Safari/537.36', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','Connection': 'keep-alive', 'Referer': 'https://fanyi.baidu.com/', 'X-Requested-With': 'XMLHttpRequest'}
         self.req_dict = {"url": url, "headers": headers}
         self.req_dict_v = {"url": "https://www.vocabulary.com", "headers": {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0', 'Host':'www.vocabulary.com', 'Referer': 'https://www.vocabulary.com/dictionary/'}}
+        self.req_dict_s = {"url": "http://dict.cn", "headers": {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0', 'Host': 'dict.cn', 'Referer': 'http://dict.cn/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'zh-CN,en-US;q=0.7,en;q=0.3'}}
         try:
+            rsp = self.sess.get(**self.req_dict_s)  #统计结果非必选项
             rsp = self.sess.get(**self.req_dict_v)
             if rsp.status_code!=200:
                 return False
@@ -755,6 +787,7 @@ class BDTranslation(object):
         payload['token'] = token
         payload['transtype'] = 'realtime'
         return payload
+
     @staticmethod
     def s_detect_lang(word):
         if ord(word[0])>122:
@@ -783,6 +816,10 @@ class BDTranslation(object):
                 res = word_obj.parse_vocabulary_rsp(rsp)
                 if not res:
                     return None
+                #dict.cn
+                self.req_dict_s['url'] = 'http://dict.cn/{0}'.format(word)
+                rsp = self.sess.get(**self.req_dict_s)
+                res = word_obj.parse_dictcn_rsp(rsp)
                 #fanyi.baidu
                 self.req_dict['url'] = 'https://fanyi.baidu.com/v2transapi'
                 self.req_dict['data'] = BDTranslation.s_gen_payload(word, html_ctx, srclang)
