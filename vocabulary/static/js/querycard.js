@@ -1,13 +1,14 @@
 var g_schemas = {
-  'default': ['front', 'posp', 'basic', 'mean', 'vocabulary', 'oxford'],
-  'simple': ['front', 'posp', 'basic', 'mean'],
-  'vocabulary': ['front', 'posp', 'basic', 'mean', 'vocabulary'],
-  'oxford': ['front', 'posp', 'basic', 'mean', 'oxford'],
-  'full': ['front', 'posp', 'transform', 'tag', 'basic', 'mean', 'vocabulary', 'oxford', 'collins', 'enmean']
+  'default': ['front', 'posp', 'audio', 'basic', 'mean', 'vocabulary', 'oxford'],
+  'simple': ['front', 'posp', 'audio', 'basic', 'mean'],
+  'vocabulary': ['front', 'posp', 'audio', 'basic', 'mean', 'vocabulary'],
+  'oxford': ['front', 'posp', 'audio', 'basic', 'mean', 'oxford'],
+  'full': ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'mean', 'vocabulary', 'oxford', 'collins', 'enmean']
 };
 var g_curschema = {
   'front': false,
   'posp': false,
+  'audio': false,
   'transform': false,
   'tag': false,
   'basic': false,

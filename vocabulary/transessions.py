@@ -98,6 +98,8 @@ class VCardRenderer(object):
         2. type == style, 调用 basic_render 完成渲染
         3. type == template, 调用 _iter_render 递归完成渲染
         """
+        if not schema_node:
+            return data
         if "delimiter" in schema_node:
             delimiter = schema_node["delimiter"]
             order = schema_node["order"]
@@ -218,7 +220,8 @@ class VCardRenderer(object):
             schema_segs = schemas["SCHEMAS"][schema_name]["SEGMENTS"]
             if 'audio' in vocabulary:
                 seg = "audio"
-                res_dict[seg] = VCardRenderer._render_schema_seg(schema_tree, schema_name, schema_segs[seg], word, vocabulary['audio'])
+                audio_data = {"audio_{0}".format(word.strip().replace(" ","_")): vocabulary['audio']}
+                res_dict[seg] = VCardRenderer._render_schema_seg(schema_tree, schema_name, schema_segs[seg], word, audio_data)
             if 'main' in vocabulary and 'definition' in vocabulary:
                 vocabulary['definition_brief'] = vocabulary['definition']
                 vocabulary.pop('definition')
@@ -643,143 +646,6 @@ class WordTranslateResult(object):
                 return new_voc
         return self.vocabulary
 
-    #生成FlashCard格式的结果数据, 一行数据, 允许使用HTML标识
-    def _gen_flashcard_data(self):
-        res_dict = {}
-        front = self.word
-        res_dict['front'] = front
-        sepc = '  '    #列分隔符
-        sepr = '<br>'  #行分隔符
-        html_templ_head = """<html><head><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container">"""
-        html_templ_tail = """</div></body></html>"""
-        html_posp_templ = u'<b class="label label-{0}">{1}</b>'
-        html_bootstrap_div = u'<div class="container">{0}</div>'
-        html_panel_head = u'<div class="panel panel-info"><div class="panel-heading"><h4 class="panel-title text-center">'
-        html_panel_tail = u'</h4></div></div>'
-        def _pretty_str_format(inputstr):
-            if not isinstance(inputstr, unicode):
-                inputstr = unicode(inputstr, "utf-8")
-            word_pattern = re.compile(self.word, re.IGNORECASE)
-            res = word_pattern.sub('<b>'+self.word+'</b>', inputstr)
-            return re.sub(r'[\r\n\t]', ' ', res)
-        def _get_std_posp(posp):
-            for k in self.pospkeys:
-                if k in posp:
-                    return self.pospkeys[k]
-            return posp
-        def _posp_html_format(posp):
-            stdp = _get_std_posp(posp)
-            if stdp in self.pospstyles:
-                return html_posp_templ.format(self.pospstyles[stdp], posp)
-            return html_posp_templ.format("default", posp)
-        #卡片反面
-        back = []
-        #第零行, 原文上下文对应的句子
-        if self.sentence:
-            v = _pretty_str_format(self.sentence)
-            back.append(v+'<hr>')
-            res_dict['sentence'] = v
-        #LINE #1. POSP
-        if self.basicmean:
-            back_idx = len(back)
-            posp = []
-            for bmean in self.basicmean:
-                stdp = _get_std_posp(bmean['posp'])
-                if stdp not in posp:
-                    posp.append(stdp)
-            if posp:
-                back.append(u"{0}".format(sepc.join([_posp_html_format(p) for p in posp])))
-                res_dict['posp'] = '\n'.join(back[back_idx:])
-        #LINE #2. 读音分隔, 音标, 基本释义
-        (wordem, ph_am, ph_en) = ('', '', '')
-        if self.wordem:
-            wordem = ''.join(['<b style="color:red">', self.wordem, '</b>'])
-        if self.ph_am:
-            ph_am = ''.join([u'美', ' [', self.ph_am, ']'])
-        if self.ph_en:
-            ph_en = ''.join([u'英', ' [', self.ph_en, ']'])
-        l = filter(len,[wordem, ph_am, ph_en, '<b>'+self.mean+'</b>'])
-        v = sepc.join(l)
-        back.append(v)
-        res_dict['basic'] = v
-        #LINE #3. 词形变换
-        l = []
-        for attr, attrzh in self.__exchange_attrs__.iteritems():
-            v = getattr(self, attr, "")
-            if v:
-                l.append( attrzh + ':' + v)
-        v = sepc.join(l)
-        back.append(v)
-        res_dict['transform'] = v
-        #LINE #4. tags
-        if self.tags:
-            back.append(self.tags.replace(',', sepc))
-            res_dict['tag'] = back[-1]
-        #LINE #5. 基本词义, 含词性 basicmean, 每条解释占一行
-        if self.basicmean:
-            back_idx = len(back)
-            for bmean in self.basicmean:
-                posp = _posp_html_format(bmean['posp'])
-                back.append(sepc.join([posp, bmean['mean']]))
-            res_dict['mean'] = '\n'.join(back[back_idx:])
-        #LINE #6. vocabulary
-        if self.vocabulary:
-            if 'audio' in self.vocabulary:
-                #audio_v = "[sound: {0}]".format(self.vocabulary['audio'])
-                #back.append(audio_v + ' <hr>')
-                res_dict['audio'] = self.vocabulary['audio']
-            k = None
-            if 'main' in self.vocabulary:
-                k = 'main'
-            elif 'definition' in self.vocabulary:
-                k = 'definition'
-            if k:
-                back.append(u'<br>{0}VOCABULARY{1}'.format(html_panel_head,html_panel_tail))
-                vocab_v = _pretty_str_format(self.vocabulary[k])
-                vocab_v = re.sub(r'(<br>\s*)+', '<br>', vocab_v)
-                #back.append('<hr>' + vocab_v + '<hr>')
-                back.append(vocab_v)
-                res_dict['vocabulary'] = vocab_v
-        #第六行, 各词典解释及例句
-        if self.means:
-            dictname = {'oxford': u'<br>{0}牛津词典{1}'.format(html_panel_head,html_panel_tail),
-                        'collins': u'<br>{0}柯林斯词典{1}'.format(html_panel_head,html_panel_tail)}
-            dictname_raw = {'oxford': u'{0}牛津词典{1}'.format("<b>","</b><br>"),
-                        'collins': u'{0}柯林斯词典{1}'.format("<br><b>","</b><br>")}
-            #dictname = {'oxford': u'<br>牛津词典<hr>',
-            #            'collins': u'<br>柯林斯词典<hr>'}
-            for dname, dmeans in self.means.iteritems():
-                if dname in dictname:
-                    back_idx = len(back)
-                    back.append(dictname[dname])
-                    for m in dmeans:
-                        if 'en' in m:
-                            back.append(m['en'])
-                        if 'zh' in m:
-                            back.append(m['zh'])
-                    dict_mean = [dictname_raw[dname]]
-                    dict_mean.extend(back[back_idx+1:])
-                    res_dict[dname] = ''.join(dict_mean)
-        #第七行, 英文释义
-        back_idx = len(back)
-        if self.enmeans:
-            for dmeans in self.enmeans:
-                for posp, enmeanlist in dmeans.iteritems():
-                    back.append('<br><b>' + posp + '</b>')
-                    for idx, enx in enumerate(enmeanlist):
-                        if 'tr' in enx and enx['tr']:
-                            x = '; '.join(enx['tr'])
-                            back.append( str(idx+1)+'. '+x)
-                        if 'example' in enx and enx['example']:
-                            for x in enx['example']:
-                                back.append('    ' + x)
-                        if 'similar_word' in enx and enx['similar_word']:
-                            x = '; '.join(enx['similar_word'])
-                            back.append('    similar: '+x)
-        res_dict['enmean'] = '\n'.join(back[back_idx:])
-        #合成卡片内容
-        res_dict['back'] = html_templ_head + sepr.join(back) + html_templ_tail
-        return res_dict
 
     #生成HTML卡片结果数据
     def gen_htmlvcard_data(self, filters):
@@ -797,11 +663,16 @@ class WordTranslateResult(object):
         renderer = VCardRenderer()
         schema_name = "anki_card"
         res_dict = renderer.render(self, schema_name)
-        html_head = u"<html><head><meta charset='utf-8' /><link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'></head><body>"
+        html_head = u"<html><head><meta charset='utf-8' />\
+            <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\
+            <link href='https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>\
+            <style>\nhtml a.audio {\ntext-decoration: none !important;\nfont-size: 18px;\npadding: 0 0 0 .75em;\ncursor: pointer;\n}</style>\
+            </head><body>"
         html_tail = u"</body></html>"
         back = html_head + \
             res_dict["basic"] + \
             res_dict["posp"] + \
+                res_dict["audio"] + \
             res_dict["tag"] + \
             res_dict["transform"] + \
             res_dict["mean"] + \

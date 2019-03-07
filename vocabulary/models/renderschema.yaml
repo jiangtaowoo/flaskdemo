@@ -91,6 +91,15 @@ SCHEMAS:
         dict_style: 
           posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
           mean: null
+      T_AUDIO:
+        delimiter: ""
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv:
+          key: null
+          value: null
+          kvconnector: "<audio id='{0}' src='{1}'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
       T_VOCABULARY:
         delimiter: ""
         order: ['dictname', 'dictcontent']
@@ -222,7 +231,7 @@ SCHEMAS:
         inner: null
       audio:
         outer: null
-        inner: null
+        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
       posp:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV_RIGHT"}
         inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
@@ -309,6 +318,15 @@ SCHEMAS:
         dict_style: 
           posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
           mean: null
+      T_AUDIO:
+        delimiter: ""
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv:
+          key: null
+          value: null
+          kvconnector: "<audio id='{0}' src='{1}'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
       T_VOCABULARY:
         delimiter: "<br>"
         order: ['dictname', 'dictcontent']
@@ -440,7 +458,7 @@ SCHEMAS:
         inner: null
       audio:
         outer: null
-        inner: null
+        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
       posp:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
