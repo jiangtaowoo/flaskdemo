@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 import os
 import inspect
@@ -691,7 +690,7 @@ class WordTranslateResult(object):
         schema_name = "anki_card"
         res_dict = renderer.render(self, schema_name)
         def _secure_back(back_html):
-            return back_html.replace("?","？").replace("&"," ")
+            return back_html.replace("?",u"？").replace("&"," ")
         html_head = u"<html><head><meta charset='utf-8' />\
             <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\
             <link href='https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>\
