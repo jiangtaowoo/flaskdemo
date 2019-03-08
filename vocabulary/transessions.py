@@ -42,23 +42,24 @@ def trans_log(logmsg):
     with open(logfilename, 'a+') as outf:
         outf.write(u"{0}:\t{1}\n".format(datetime.datetime.now(),logmsg))
 
-def everything_2_unicode(inputs):
-    if is_py2:
-        if not isinstance(inputs, unicode):
-            inputs = unicode(inputs, "utf-8")
-    elif is_py3:
-        if isinstance(inputs, bytes):
-            inputs = inputs.decode("utf-8")
-        elif not isinstance(inputs, str):
-            inputs = str(inputs)
-    return inputs
-
-def is_str_or_unicode(inputs):
-    if is_py2:
+if is_py2:
+    def is_str_or_unicode(inputs):
         return isinstance(inputs, str) or isinstance(inputs, unicode)
-    elif is_py3:
+
+    def py23_2_unicode(v):
+        if isinstance(v, str):
+            return v.decode("utf-8")
+        else:
+            return v
+elif is_py3:
+    def is_str_or_unicode(inputs):
         return isinstance(inputs, str)
-    return False
+
+    def py23_2_unicode(v):
+        if isinstance(v, bytes):
+            return v.decode("utf-8")
+        else:
+            return v
 
 """
 翻译结果渲染
@@ -116,9 +117,9 @@ class VCardRenderer(object):
         if isinstance(schema_node, dict):
             #按字典匹配内容渲染
             if data in schema_node['match']:
-                return everything_2_unicode(schema_node['match'][data]).format(data)
-            return everything_2_unicode(schema_node['except']).format(data)
-        return everything_2_unicode(schema_node).format(data)
+                return py23_2_unicode(schema_node['match'][data]).format(data)
+            return py23_2_unicode(schema_node['except']).format(data)
+        return py23_2_unicode(schema_node).format(data)
 
     @staticmethod
     def _iter_render(schema_tree, schema_name, schema_node, data):
@@ -181,7 +182,7 @@ class VCardRenderer(object):
                         if k in data:
                             schema_k = dict_sc_kv["key"]
                             schema_v = dict_sc_kv["value"]
-                            schema_kvc = everything_2_unicode(dict_sc_kv["kvconnector"])
+                            schema_kvc = py23_2_unicode(dict_sc_kv["kvconnector"])
                             rendered_k = VCardRenderer._iter_render(schema_tree, schema_name, schema_k, k)
                             rendered_v = VCardRenderer._iter_render(schema_tree, schema_name, schema_v, data[k])
                             result.append(schema_kvc.format(rendered_k, rendered_v))
@@ -189,7 +190,7 @@ class VCardRenderer(object):
                 return delimiter.join(result)
         elif "type" in schema_node:
             if schema_node["type"]=="raw":
-                fmt = everything_2_unicode(schema_node["data"])
+                fmt = py23_2_unicode(schema_node["data"])
                 #if not isinstance(fmt, unicode):
                 #    fmt = unicode(fmt,"utf-8")
                 return fmt.format(data)
@@ -214,7 +215,7 @@ class VCardRenderer(object):
                 return inputs
             else:
                 #change everything to unicode
-                inputs = everything_2_unicode(inputs)
+                inputs = py23_2_unicode(inputs)
                 word_pattern = re.compile(theword, re.IGNORECASE)
                 highlight_word = VCardRenderer._basic_render(hilight_node, theword)
                 return word_pattern.sub(highlight_word, inputs)

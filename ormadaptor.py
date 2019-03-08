@@ -16,6 +16,19 @@ is_py2 = (_ver[0] == 2)
 #: Python 3.x?
 is_py3 = (_ver[0] == 3)
 
+if is_py2:
+    def py23_2_unicode(v):
+        if isinstance(v, str):
+            return v.decode("utf-8")
+        else:
+            return v
+elif is_py3:
+    def py23_2_unicode(v):
+        if isinstance(v, bytes):
+            return v.decode("utf-8")
+        else:
+            return v
+
 
 class AdaptorORM(object):
     def __init__(self, modelname, dbname):
@@ -56,10 +69,7 @@ class AdaptorORM(object):
                 valid_data = dict()
                 for k, v in six.iteritems(kwargs):
                     if k in modelcfg['cols']:
-                        if is_py2:
-                            valid_data[k] = v if not isinstance(v, str) else v.decode('utf-8')
-                        elif is_py3:
-                            valid_data[k] = v if not isinstance(v, bytes) else v.decode('utf-8')
+                        valid_data[k] = py23_2_unicode(v)
                 return valid_data
         return None
 
@@ -92,10 +102,7 @@ class AdaptorORM(object):
                 for k, v in six.iteritems(kwargs):
                     if k not in pk_data_d:
                         if hasattr(modelObj, k):
-                            if is_py2:
-                                setattr(modelObj, k, v if not isinstance(v, str) else v.decode('utf-8'))
-                            elif is_py3:
-                                setattr(modelObj, k, v if not isinstance(v, bytes) else v.decode('utf-8'))
+                            setattr(modelObj, k, py23_2_unicode(v))
                 session.commit()
             session.close()
 
