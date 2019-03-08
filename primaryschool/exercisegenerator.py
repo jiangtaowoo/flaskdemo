@@ -2,7 +2,7 @@
 import random
 import os
 import yaml
-import schemamgr
+import primaryschool.schemamgr as schemamgr
 
 CLAC_OPERATIONS = {"+": lambda x, y: x+y,
     "-": lambda x,y: x-y,

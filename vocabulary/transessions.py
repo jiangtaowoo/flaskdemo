@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 import os
+import sys
 import inspect
-from sys import argv
 import re
 import json
 import copy
@@ -11,10 +13,20 @@ import yaml
 from collections import deque
 import requests
 from requests.models import Response as ReqResponse
-import baidufy_sign
-import sys
+import vocabulary.baidufy_sign as baidufy_sign
 from metacls import Singleton
-from urllib import unquote
+import sys
+# Syntax sugar.
+_ver = sys.version_info
+#: Python 2.x?
+is_py2 = (_ver[0] == 2)
+#: Python 3.x?
+is_py3 = (_ver[0] == 3)
+
+if is_py2:
+    from urllib import unquote
+elif is_py3:
+    from urllib.parse import unquote
 
 sys.path.insert(1, os.path.join(sys.path[0],'..'))
 import ormadaptor
@@ -30,6 +42,23 @@ def trans_log(logmsg):
     with open(logfilename, 'a+') as outf:
         outf.write(u"{0}:\t{1}\n".format(datetime.datetime.now(),logmsg))
 
+def everything_2_unicode(inputs):
+    if is_py2:
+        if not isinstance(inputs, unicode):
+            inputs = unicode(inputs, "utf-8")
+    elif is_py3:
+        if isinstance(inputs, bytes):
+            inputs = inputs.decode("utf-8")
+        elif not isinstance(inputs, str):
+            inputs = str(inputs)
+    return inputs
+
+def is_str_or_unicode(inputs):
+    if is_py2:
+        return isinstance(inputs, str) or isinstance(inputs, unicode)
+    elif is_py3:
+        return isinstance(inputs, str)
+    return False
 
 """
 翻译结果渲染
@@ -82,14 +111,14 @@ class VCardRenderer(object):
            b. 方式二: 根据key匹配渲染模板, 将key, value按模板渲染
         """
         #只支持字符串渲染
-        if not (isinstance(data, str) or isinstance(data, unicode)):
+        if not is_str_or_unicode(data):
             return data
         if isinstance(schema_node, dict):
             #按字典匹配内容渲染
             if data in schema_node['match']:
-                return unicode(schema_node['match'][data],"utf-8").format(data)
-            return unicode(schema_node['except'],"utf-8").format(data)
-        return unicode(schema_node,"utf-8").format(data)
+                return everything_2_unicode(schema_node['match'][data]).format(data)
+            return everything_2_unicode(schema_node['except']).format(data)
+        return everything_2_unicode(schema_node).format(data)
 
     @staticmethod
     def _iter_render(schema_tree, schema_name, schema_node, data):
@@ -152,7 +181,7 @@ class VCardRenderer(object):
                         if k in data:
                             schema_k = dict_sc_kv["key"]
                             schema_v = dict_sc_kv["value"]
-                            schema_kvc = dict_sc_kv["kvconnector"]
+                            schema_kvc = everything_2_unicode(dict_sc_kv["kvconnector"])
                             rendered_k = VCardRenderer._iter_render(schema_tree, schema_name, schema_k, k)
                             rendered_v = VCardRenderer._iter_render(schema_tree, schema_name, schema_v, data[k])
                             result.append(schema_kvc.format(rendered_k, rendered_v))
@@ -160,9 +189,9 @@ class VCardRenderer(object):
                 return delimiter.join(result)
         elif "type" in schema_node:
             if schema_node["type"]=="raw":
-                fmt = schema_node["data"]
-                if not isinstance(fmt, unicode):
-                    fmt = unicode(fmt,"utf-8")
+                fmt = everything_2_unicode(schema_node["data"])
+                #if not isinstance(fmt, unicode):
+                #    fmt = unicode(fmt,"utf-8")
                 return fmt.format(data)
             elif schema_node["type"]=="style":
                 style_k = schema_node["data"]
@@ -185,8 +214,7 @@ class VCardRenderer(object):
                 return inputs
             else:
                 #change everything to unicode
-                if not isinstance(inputs, unicode):
-                    inputs = unicode(inputs, "utf-8")
+                inputs = everything_2_unicode(inputs)
                 word_pattern = re.compile(theword, re.IGNORECASE)
                 highlight_word = VCardRenderer._basic_render(hilight_node, theword)
                 return word_pattern.sub(highlight_word, inputs)
@@ -659,6 +687,11 @@ class WordTranslateResult(object):
         #mean 基本词义, 含词性 basicmean, 每条解释占一行
         if self.basicmean:
             basicd["mean"] = self.basicmean
+        #词频统计
+        if self.dictcnstat:
+            basicd['stat'] = self.dictcnstat
+        else:
+            basicd['stat'] = {}
         return basicd
 
     #缩减vocabulary中的definition数量

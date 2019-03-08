@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 import os
 import yaml
 from sqlalchemy.ext.declarative import declarative_base
@@ -6,6 +8,13 @@ from sqlalchemy import Column, String, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from collections import OrderedDict
 import six
+import sys
+# Syntax sugar.
+_ver = sys.version_info
+#: Python 2.x?
+is_py2 = (_ver[0] == 2)
+#: Python 3.x?
+is_py3 = (_ver[0] == 3)
 
 
 class AdaptorORM(object):
@@ -47,7 +56,10 @@ class AdaptorORM(object):
                 valid_data = dict()
                 for k, v in six.iteritems(kwargs):
                     if k in modelcfg['cols']:
-                        valid_data[k] = v if not isinstance(v, str) else v.decode('utf-8')
+                        if is_py2:
+                            valid_data[k] = v if not isinstance(v, str) else v.decode('utf-8')
+                        elif is_py3:
+                            valid_data[k] = v if not isinstance(v, bytes) else v.decode('utf-8')
                 return valid_data
         return None
 
@@ -80,7 +92,10 @@ class AdaptorORM(object):
                 for k, v in six.iteritems(kwargs):
                     if k not in pk_data_d:
                         if hasattr(modelObj, k):
-                            setattr(modelObj, k, v if not isinstance(v, str) else v.decode('utf-8'))
+                            if is_py2:
+                                setattr(modelObj, k, v if not isinstance(v, str) else v.decode('utf-8'))
+                            elif is_py3:
+                                setattr(modelObj, k, v if not isinstance(v, bytes) else v.decode('utf-8'))
                 session.commit()
             session.close()
 

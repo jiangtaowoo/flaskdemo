@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify
-import exercisegenerator as exegen
-import schemamgr
+import primaryschool.exercisegenerator as exegen
+import primaryschool.schemamgr as schemamgr
 
 primaryschool_bp = Blueprint("school", __name__, template_folder="templates")
 

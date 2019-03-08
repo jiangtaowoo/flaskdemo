@@ -5,17 +5,21 @@ SHARED_STYLE:
       match:
         adj: "<b class='label label-warning'>{0}</b>"
         "adj.": "<b class='label label-warning'>{0}</b>"
+        "形容词": "<b class='label label-warning'>{0}</b>"
         adv: "<b class='label label-info'>{0}</b>"
         "adv.": "<b class='label label-info'>{0}</b>"
+        "副词": "<b class='label label-info'>{0}</b>"
         n: "<b class='label label-danger'>{0}</b>"
-        "n.": "<b class='label label-danger'>{0}</b>"
         noun: "<b class='label label-danger'>{0}</b>"
+        "n.": "<b class='label label-danger'>{0}</b>"
+        "名词": "<b class='label label-danger'>{0}</b>"
         v: "<b class='label label-success'>{0}</b>"
         "v.": "<b class='label label-success'>{0}</b>"
         vi: "<b class='label label-success'>{0}</b>"
         "vi.": "<b class='label label-success'>{0}</b>"
         vt: "<b class='label label-success'>{0}</b>"
         "vt.": "<b class='label label-success'>{0}</b>"
+        "动词": "<b class='label label-success'>{0}</b>"
         verb: "<b class='label label-success'>{0}</b>"
       except: "<b class='label label-default'>{0}</b>"
   RAW_STYLE:
@@ -79,6 +83,45 @@ SCHEMAS:
         order: null
         list_style: {"type": "raw", "data": "<b class='label label-default'>{0}</b>"}
         dict_style: null
+      T_STAT:
+        delimiter: " "
+        order: ['basic', 'posp']
+        list_style: null
+        dict_style: 
+          basic: {"type": "template", "data": "TEMPLATES.T_STAT_LB0"}
+          posp: {"type": "template", "data": "TEMPLATES.T_STAT_LP0"}
+      T_STAT_LB0:
+        delimiter: " "
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv :
+          key: null
+          value: {"type": "template", "data": "TEMPLATES.T_STAT_LB1"}
+          kvconnector: "{1}"
+      T_STAT_LB1:
+        delimiter: ""
+        order: ['sense', 'percent']
+        list_style: null
+        dict_style: 
+          sense: {"type": "raw", "data": "{0}"}
+          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
+      T_STAT_LP0:
+        delimiter: " "
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv :
+          key: null
+          value: {"type": "template", "data": "TEMPLATES.T_STAT_LP1"}
+          kvconnector: "{1}"
+      T_STAT_LP1:
+        delimiter: ""
+        order: ['pos', 'percent']
+        list_style: null
+        dict_style: 
+          pos: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
       T_MEAN:
         delimiter: "<br>"
         order: null
@@ -99,7 +142,7 @@ SCHEMAS:
         dict_style_kv:
           key: null
           value: null
-          kvconnector: "<audio id='{0}' src='{1}'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
+          kvconnector: "<audio id='{0}' src='{1}' preload='none'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
       T_VOCABULARY:
         delimiter: ""
         order: ['dictname', 'dictcontent']
@@ -244,6 +287,9 @@ SCHEMAS:
       tag:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
+      stat:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
       mean:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
@@ -306,6 +352,45 @@ SCHEMAS:
         order: null
         list_style: {"type": "raw", "data": "<b class='label label-default'>{0}</b>"}
         dict_style: null
+      T_STAT:
+        delimiter: " "
+        order: ['basic', 'posp']
+        list_style: null
+        dict_style: 
+          basic: {"type": "template", "data": "TEMPLATES.T_STAT_LB0"}
+          posp: {"type": "template", "data": "TEMPLATES.T_STAT_LP0"}
+      T_STAT_LB0:
+        delimiter: " "
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv :
+          key: null
+          value: {"type": "template", "data": "TEMPLATES.T_STAT_LB1"}
+          kvconnector: "{1}"
+      T_STAT_LB1:
+        delimiter: ""
+        order: ['sense', 'percent']
+        list_style: null
+        dict_style: 
+          sense: {"type": "raw", "data": "{0}"}
+          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
+      T_STAT_LP0:
+        delimiter: " "
+        order: null
+        list_style: null
+        dict_style: null
+        dict_style_kv :
+          key: null
+          value: {"type": "template", "data": "TEMPLATES.T_STAT_LP1"}
+          kvconnector: "{1}"
+      T_STAT_LP1:
+        delimiter: ""
+        order: ['pos', 'percent']
+        list_style: null
+        dict_style: 
+          pos: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
       T_MEAN:
         delimiter: " "
         order: null
@@ -326,7 +411,7 @@ SCHEMAS:
         dict_style_kv:
           key: null
           value: null
-          kvconnector: "<audio id='{0}' src='{1}'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
+          kvconnector: "<audio id='{0}' src='{1}' preload='none'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
       T_VOCABULARY:
         delimiter: "<br>"
         order: ['dictname', 'dictcontent']
@@ -471,6 +556,9 @@ SCHEMAS:
       tag:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
+      stat:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
       mean:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
