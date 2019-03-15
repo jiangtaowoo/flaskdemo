@@ -9,7 +9,7 @@ from . import transessions
 def session():
     return transessions.BDTranslation()
 
-def translate(word):
+def translate(format_type, word):
     """Constructs and sends a translation request
     :param word: word to be translated.
 
@@ -19,9 +19,9 @@ def translate(word):
       <Response json>
     """
     with transessions.BDTranslation() as session:
-        return session.translate(word)
+        return session.translate(format_type, word)
 
-def query(pattern):
+def query(format_type, pattern):
     """Constructs and sends a vocabulary query
     :param pattern: could be a word (eg. immature) or pattern (eg. con*)
 
@@ -32,4 +32,4 @@ def query(pattern):
       <Response html string>
     """
     with transessions.BDTranslation() as session:
-        return session.query(pattern)
+        return session.query(format_type, pattern)

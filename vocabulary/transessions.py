@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
+import compat
 import os
-import sys
 import inspect
 import re
 import json
@@ -15,26 +15,74 @@ import requests
 from requests.models import Response as ReqResponse
 import vocabulary.baidufy_sign as baidufy_sign
 from metacls import Singleton
-import sys
-# Syntax sugar.
-_ver = sys.version_info
-#: Python 2.x?
-is_py2 = (_ver[0] == 2)
-#: Python 3.x?
-is_py3 = (_ver[0] == 3)
 
-if is_py2:
+if compat.is_py2:
     from urllib import unquote
-elif is_py3:
+elif compat.is_py3:
     from urllib.parse import unquote
 
-sys.path.insert(1, os.path.join(sys.path[0],'..'))
+#sys.path.insert(1, os.path.join(sys.path[0],'..'))
 import ormadaptor
 #from .. import ormadaptor
 
+cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+"""
+configuration for different output
+default is web_2_anki for iOS shortcut
+"""
+configuration = dict()
+configuration["dbname"] = "vocabulary.db"
+configuration["schema"] = "anki_card"
+configuration["queryweb"] = True
+configuration["need_vocabulary"] = True
+configuration["need_flashcard"] = True
+configuration["log_success"] = True
+
+def config_local_2_raw():
+    configuration["schema"] = "database_raw"
+    configuration["queryweb"] = False
+    configuration["need_vocabulary"] = False
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = False
+
+def config_local_2_anki():
+    configuration["schema"] = "anki_card"
+    configuration["queryweb"] = False
+    configuration["need_vocabulary"] = False
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = False
+
+def config_local_2_html():
+    configuration["schema"] = "html_card"
+    configuration["queryweb"] = False
+    configuration["need_vocabulary"] = False
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = False
+
+def config_web_2_raw():
+    configuration["schema"] = "database_raw"
+    configuration["queryweb"] = True
+    configuration["need_vocabulary"] = True
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = True
+
+def config_web_2_anki():
+    configuration["schema"] = "anki_card"
+    configuration["queryweb"] = True
+    configuration["need_vocabulary"] = True
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = True
+
+def config_web_2_html():
+    configuration["schema"] = "html_card"
+    configuration["queryweb"] = True
+    configuration["need_vocabulary"] = True
+    configuration["need_flashcard"] = True
+    configuration["log_success"] = True
+
 
 def trans_log(logmsg):
-    cur_dir = os.path.dirname(os.path.relpath(__file__))
     log_dir = os.sep.join([cur_dir, 'logs'])
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -42,24 +90,6 @@ def trans_log(logmsg):
     with open(logfilename, 'a+') as outf:
         outf.write(u"{0}:\t{1}\n".format(datetime.datetime.now(),logmsg))
 
-if is_py2:
-    def is_str_or_unicode(inputs):
-        return isinstance(inputs, str) or isinstance(inputs, unicode)
-
-    def py23_2_unicode(v):
-        if isinstance(v, str):
-            return v.decode("utf-8")
-        else:
-            return v
-elif is_py3:
-    def is_str_or_unicode(inputs):
-        return isinstance(inputs, str)
-
-    def py23_2_unicode(v):
-        if isinstance(v, bytes):
-            return v.decode("utf-8")
-        else:
-            return v
 
 """
 翻译结果渲染
@@ -68,7 +98,6 @@ class VCardRenderer(object):
     __metaclass__ = Singleton
 
     def __init__(self):
-        cur_dir = os.path.dirname(os.path.relpath(__file__))
         schema_filename = os.sep.join([cur_dir, "models", "renderschema.yaml"])
         res = VCardRenderer._build_schema_tree(schema_filename)
         self.schemas, self.schema_tree = res
@@ -112,14 +141,14 @@ class VCardRenderer(object):
            b. 方式二: 根据key匹配渲染模板, 将key, value按模板渲染
         """
         #只支持字符串渲染
-        if not is_str_or_unicode(data):
+        if not compat.is_str_or_unicode(data):
             return data
         if isinstance(schema_node, dict):
             #按字典匹配内容渲染
             if data in schema_node['match']:
-                return py23_2_unicode(schema_node['match'][data]).format(data)
-            return py23_2_unicode(schema_node['except']).format(data)
-        return py23_2_unicode(schema_node).format(data)
+                return compat.py23_2_unicode(schema_node['match'][data]).format(data)
+            return compat.py23_2_unicode(schema_node['except']).format(data)
+        return compat.py23_2_unicode(schema_node).format(data)
 
     @staticmethod
     def _iter_render(schema_tree, schema_name, schema_node, data):
@@ -182,7 +211,7 @@ class VCardRenderer(object):
                         if k in data:
                             schema_k = dict_sc_kv["key"]
                             schema_v = dict_sc_kv["value"]
-                            schema_kvc = py23_2_unicode(dict_sc_kv["kvconnector"])
+                            schema_kvc = compat.py23_2_unicode(dict_sc_kv["kvconnector"])
                             rendered_k = VCardRenderer._iter_render(schema_tree, schema_name, schema_k, k)
                             rendered_v = VCardRenderer._iter_render(schema_tree, schema_name, schema_v, data[k])
                             result.append(schema_kvc.format(rendered_k, rendered_v))
@@ -190,7 +219,7 @@ class VCardRenderer(object):
                 return delimiter.join(result)
         elif "type" in schema_node:
             if schema_node["type"]=="raw":
-                fmt = py23_2_unicode(schema_node["data"])
+                fmt = compat.py23_2_unicode(schema_node["data"])
                 #if not isinstance(fmt, unicode):
                 #    fmt = unicode(fmt,"utf-8")
                 return fmt.format(data)
@@ -215,7 +244,7 @@ class VCardRenderer(object):
                 return inputs
             else:
                 #change everything to unicode
-                inputs = py23_2_unicode(inputs)
+                inputs = compat.py23_2_unicode(inputs)
                 word_pattern = re.compile(theword, re.IGNORECASE)
                 highlight_word = VCardRenderer._basic_render(hilight_node, theword)
                 return word_pattern.sub(highlight_word, inputs)
@@ -329,7 +358,7 @@ class VCardRenderer(object):
         res_tmp = VCardRenderer.present_enmean(schemas, schema_tree, schema_name, vcardinst)
         res_dict.update(res_tmp)
         #fill blank
-        keys = ["front", "posp", "tag", "transform", "basic", "mean", "audio", "vocabulary", "oxford", "collins", "enmean"]
+        keys = ["front", "posp", "tag", "transform", "basic", "mean", "stat", "audio", "vocabulary", "oxford", "collins", "enmean"]
         for k in keys:
             if k not in res_dict:
                 res_dict[k] = u""
@@ -354,8 +383,7 @@ class WordTranslateResult(object):
     }
 
     def __init__(self):
-        cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        self.ada = ormadaptor.AdaptorORM(os.sep.join([cur_dir,"models","dictmodel.yaml"]), os.sep.join([cur_dir,"vocabulary.db"]))
+        self.ada = ormadaptor.AdaptorORM(os.sep.join([cur_dir,"models","dictmodel.yaml"]), os.sep.join([cur_dir,configuration["dbname"]]))
         self.vocabulary = {}   #vocabulary网站的解释
         self.word = ""         #单词本身
         self.wordem = ""       #读音分隔, 重音在哪
@@ -462,7 +490,7 @@ class WordTranslateResult(object):
         except Exception as e:
             trans_log(u"parse vocabulary rsp except {0}".format(e))
             return None
-            
+
 
     #从响应结构体中提取翻译结果
     def parse_baidu_rsp(self, rsp):
@@ -709,10 +737,10 @@ class WordTranslateResult(object):
         return self.vocabulary
 
 
-    #生成HTML卡片结果数据
-    def gen_htmlvcard_data(self, filters):
+    #批量生成卡片, 根据filters过滤出数据, 将每行数据按shcemaname渲染, 返回渲染结果列表(list)
+    def gen_batchcard_data(self, schemaname, filters):
         def _gen_htmlcard_impl():
-            return VCardRenderer().render(self, "html_vcard")
+            return VCardRenderer().render(self, schemaname)
         cboper=[_gen_htmlcard_impl]
         res = self.export_db(filters, cboper=cboper)
         if res:
@@ -721,9 +749,8 @@ class WordTranslateResult(object):
             return []
 
     #返回需要制作anki卡片的数据json
-    def gen_flashcard_data(self):
+    def gen_flashcard_data(self, schema_name, orders=["basic","posp","audio","transform","tag","mean","stat","vocabulary","oxford","collins","enmean"]):
         renderer = VCardRenderer()
-        schema_name = "anki_card"
         res_dict = renderer.render(self, schema_name)
         def _secure_back(back_html):
             return back_html.replace("?",u"？").replace("&"," ")
@@ -733,25 +760,18 @@ class WordTranslateResult(object):
             <style> html a.audio { text-decoration: none !important; font-size: 22px; padding: 0 0 0 .75em; cursor: pointer;}</style>\
             </head><body>"
         html_tail = u"</body></html>"
-        back = html_head + \
-            res_dict["basic"] + \
-            res_dict["posp"] + \
-                res_dict["audio"] + \
-            res_dict["tag"] + \
-            res_dict["transform"] + \
-            res_dict["mean"] + \
-            res_dict["vocabulary"] + \
-            res_dict["oxford"] + \
-            res_dict["collins"] + \
-            res_dict["enmean"] + \
-            html_tail
-        res_dict["back"] = _secure_back(back)
+        back = [html_head]
+        for k in orders:
+            if k in res_dict:
+                back.append(res_dict[k])
+        back.append(html_tail)
+        res_dict["back"] = _secure_back(u"".join(back).replace("\t"," "))
         return res_dict
 
     #生成flashcard内容
-    def make_flashcard(self):
+    def make_flashcard(self, schema_name):
         delimiter=u"\t"
-        carddata = self.gen_flashcard_data()
+        carddata = self.gen_flashcard_data(schema_name)
         return carddata['front'] + delimiter + carddata['back']
 
 """
@@ -833,10 +853,12 @@ class BDTranslation(object):
     def _log_translate_result(result_info):
         trans_log(result_info)
 
-    def _translate_request(self, word):
+    def _translate_request(self, schema_name, word):
         word_obj = WordTranslateResult()
         word_in_dict = word_obj.read_result_from_db(word)
         if not word_in_dict:
+            if not configuration["queryweb"]:
+                return None
             srclang = BDTranslation.s_detect_lang(word)
             #step 1. first visit, to get gtk, token
             html_ctx = self._init_request()
@@ -849,7 +871,7 @@ class BDTranslation(object):
                 self.req_dict_v['params'] = {"search": word, "lang": "en"}
                 rsp = self.sess.get(**self.req_dict_v)
                 res = word_obj.parse_vocabulary_rsp(rsp)
-                if not res:
+                if configuration["need_vocabulary"] and not res:
                     return None
                 #dict.cn
                 self.req_dict_s['url'] = 'http://dict.cn/{0}'.format(word)
@@ -862,29 +884,48 @@ class BDTranslation(object):
                 res = word_obj.parse_baidu_rsp(rsp)
                 if res:
                     word_obj.write_result_to_db()
-                    return word_obj.gen_flashcard_data()
+                    if configuration["need_flashcard"]:
+                        return word_obj.gen_flashcard_data(schema_name)
+                    else:
+                        return True
                 else:
                     return None
             except Exception as e:
                 trans_log(u"translate_req {0} except {1}".format(word, e))
                 return None
         else:
-            return word_obj.gen_flashcard_data()
+            if configuration["need_flashcard"]:
+                return word_obj.gen_flashcard_data(schema_name)
+            else:
+                return True
 
     """
     API
     """
-    def translate(self, word):
-        result = self._translate_request(word)
+    def translate(self, format_type, word):
+        if format_type=="anki":
+            schema_name = "anki_card"
+        elif format_type=="html":
+            schema_name = "html_card"
+        else:
+            schema_name = "database_raw"
+        result = self._translate_request(schema_name, word)
         if result:
-            BDTranslation._log_translate_result(u"{0} OK!".format(word))
+            if configuration["log_success"]:
+                BDTranslation._log_translate_result(u"{0} OK!".format(word))
             return result
         else:
             BDTranslation._log_translate_result(u"{0} fail ...".format(word))
             return {}
 
-    def query(self, pattern):
+    def query(self, format_type, pattern):
         pattern = pattern.replace('*','%')
         word_obj = WordTranslateResult()
-        res = word_obj.gen_htmlvcard_data({"word":pattern})
+        if format_type=="anki":
+            schema_name = "anki_card"
+        elif format_type=="html":
+            schema_name = "html_card"
+        else:
+            schema_name = "database_raw"
+        res = word_obj.gen_batchcard_data(schema_name,{"word":pattern})
         return res

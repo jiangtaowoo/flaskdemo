@@ -34,12 +34,53 @@ SHARED_STYLE:
     HTML_BOLD_LINE_AFTER: "<b>{0}</b><br>"
     HTML_ITALIC: "<i>{0}</i>"
     HTML_BOLD_RED: "<b style='color:red'>{0}</b>"
-    HTML_BOOTSTRAP_DIV: "<div class='container'>{0}</div>"
-    HTML_BOOTSTRAP_DIV_LEFT: "<div class='container'>{0}"
+    HTML_BOOTSTRAP_DIV: "<div class='container-fluid'>{0}</div>"
+    HTML_BOOTSTRAP_DIV_LEFT: "<div class='container-fluid'>{0}"
     HTML_BOOTSTRAP_DIV_RIGHT: " {0}</div>"
-    HTML_BOOTSTRAP_PANEL_TITLE: "<div class='panel panel-info'><div class='panel-heading'><h4 class='panel-title text-center'>{0}</h4></div></div>"
+    HTML_BOOTSTRAP_PANEL_TITLE: "<div class='panel panel-warning'><div class='panel-heading'><h4 class='panel-title text-center'><a data-toggle='collapse' href='#collapse1'>{0}</a></h4></div></div>"
+    HTML_BOOTSTRAP_PANEL_1: "<div class='panel panel-warning'>{0}</div>"
+    HTML_BOOTSTRAP_PANEL_TITLE_1: "<div class='panel-heading'><h4 class='panel-title text-center'><a data-toggle='collapse' href='#collapse1'>{0}</a></h4></div>"
+    HTML_BOOTSTRAP_PANEL_BODY_1: <div id='collapse1' class='panel-collapse collapse'><div class='panel-body'>{0}</div></div>"
     HTML_BOOTSTRAP_PANEL_FORDICT: "<div class='panel panel-success'><div class='panel-heading'><h3 class='panel-title'>{0}</h3></div></div>"
 SCHEMAS:
+  database_raw:
+    SEGMENTS:
+      front:
+        outer: null
+        inner: null
+      audio:
+        outer: null
+        inner: null
+      posp:
+        outer: null
+        inner: null
+      basic:
+        outer: null
+        inner: null
+      transform:
+        outer: null
+        inner: null
+      tag:
+        outer: null
+        inner: null
+      stat:
+        outer: null
+        inner: null
+      mean:
+        outer: null
+        inner: null
+      vocabulary:
+        outer: null
+        inner: null
+      oxford:
+        outer: null
+        inner: null
+      collins:
+        outer: null
+        inner: null
+      enmean:
+        outer: null
+        inner: null
   anki_card:
     TEMPLATES:
       T_LIST_HTMLLINE:
@@ -272,27 +313,27 @@ SCHEMAS:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: null
+      basic:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
+        inner: {"type": "template", "data": "TEMPLATES.T_BASIC"}
+      posp:
+        outer: null
+        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
       audio:
         outer: null
         inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
-      posp:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV_RIGHT"}
-        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
-      basic:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV_LEFT"}
-        inner: {"type": "template", "data": "TEMPLATES.T_BASIC"}
-      transform:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
       tag:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
-      stat:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
-        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
+      transform:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
+        inner: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
       mean:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
+      stat:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
       vocabulary:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
@@ -309,7 +350,7 @@ SCHEMAS:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
         inner: {"type": "template", "data": "TEMPLATES.T_ENMEANS"}
-  html_vcard:
+  html_card:
     TEMPLATES:
       T_LIST_HTMLLINE:
         delimiter: "<br>"
@@ -541,27 +582,27 @@ SCHEMAS:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
         outer: null
         inner: null
-      audio:
-        outer: null
-        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
-      posp:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
       basic:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_BASIC"}
+      posp:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
+        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
+      audio:
+        outer: null
+        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
       transform:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
       tag:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
-      stat:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
-        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
       mean:
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
         inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
+      stat:
+        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
       vocabulary:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
         outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_BEFORE"}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>读书认字</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ url_for('reading.static', filename='css/vcard.css') }}" rel="stylesheet">
+    <script src="{{ url_for('reading.static', filename='js/mark.min.js') }}"></script>
+    <style>
+        .fiction_row {
+            /*box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 5px;*/
+            width: 100%;
+            padding-left: 5px;
+            padding-right: 5px;
+            margin-bottom: 20px;
+        }
+        /*
+        .fiction_row:hover {
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }*/
+        body {
+            padding-top: 60px;
+        }
+        mark{
+            background: orange;
+            color: black;
+        }
+        .navbar-inverse, 
+        .navbar-inverse .navbar-nav>.active>a, 
+        .navbar-inverse .navbar-nav>.active>a:hover, 
+        .navbar-inverse .navbar-nav > li.dropdown.active.open > a,
+        .navbar-inverse .navbar-nav > li.dropdown.active.open > ul.dropdown-menu a:hover,
+        .navbar-inverse .navbar-nav > li.dropdown.open > a,
+        .navbar-inverse .navbar-nav > li.dropdown.open > ul.dropdown-menu a:hover  {
+            color: #fff;
+            background: rgba(18, 11, 22, 0.8);
+        }
+        .navbar .pull-right {
+            float: right;
+            margin-right: 0;
+        }
+        p.vreading_content {
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #474d51;
+            margin: 0 0 24px;
+            margin: 0 0 1.414285714rem;
+            line-height: 1.414285714;
+        }
+        html a.audio {
+            text-decoration: none !important;
+            font-size: 20px;
+            padding: 0 0 0 .75em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">DEMO</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">读书 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/reading">小王子</a></li>
+                            <li><a href="/reading?artname=prideandprejudice">傲慢与偏见</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">考研真题</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!--div class="col-sm-6 col-md-6"-->
+                <ul class="nav navbar-nav navbar-right">
+                    <form id="app-keyword-search" class="navbar-form" role="search">
+                        <div class="input-group">
+                            <input type="text" class="form-control" v-model="wordtosearch" placeholder="Search" name="word"
+                                @keyup="partialKeyWordMark">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" @click="loadAnkiCard" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </ul>
+                <!--/div-->
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0; margin: 0">
+                <div id="app-left-whole-content" class="container-fluid pre-scrollable" style="padding: 0; padding-left: 10px; margin: 0; max-height: 90vh">
+                    <div class="row fiction_row">
+                        {{ fiction_content | safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="row" style="margin-bottom: 0px">
+                    <div id="app-chart-view" style="width: 600px; height: 0px"></div>
+                </div>
+                <div class="row">
+                    <div id="app-voc-card" class="container-fluid pre-scrollable" style="max-height: 90vh">
+                        <vocabulary-card v-for="(vcard,index) in cards" v-bind:vcard="vcard" v-bind:viewopt="schema"
+                            v-bind:key="vcard.front"></vocabulary-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<template id="template-vcard">
+    <div class="vocabulary">
+        <div class="row">
+            <div class="card">
+                <div class="container-fluid">
+                    {% raw %}
+                    <span v-if="viewopt.front" v-html="vcard.front"></span>
+                    <span v-if="viewopt.posp" v-html="vcard.posp"></span>
+                    <span v-if="viewopt.transform" v-html="vcard.transform"></span>
+                    <span v-if="viewopt.tag" v-html="vcard.tag"></span>
+                    <span v-if="viewopt.audio" v-html="vcard.audio"></span>
+                    <span v-if="viewopt.basic" v-html="vcard.basic"></span>
+                    <span v-if="viewopt.mean" v-html="vcard.mean"></span>
+                    <span v-if="viewopt.vocabulary" v-html="vcard.vocabulary"></span>
+                    <span v-if="viewopt.oxford" v-html="vcard.oxford"></span>
+                    <span v-if="viewopt.collins" v-html="vcard.collins"></span>
+                    <span v-if="viewopt.enmean" v-html="vcard.enmean"></span>
+                    {% endraw %}
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 8px"></div>
+    </div>
+</template>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{{ url_for('reading.static', filename='js/reading.js') }}"></script>
+
+</html>

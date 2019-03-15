@@ -12,7 +12,7 @@ def lookup_word():
         if not pattern and request.json and 'word' in request.json:
             pattern = request.json['word']
         if pattern:
-            cards = trans_sess.query(pattern.strip())
+            cards = trans_sess.query("html", pattern.strip())
             return jsonify(cards)
         else:
             return jsonify([])
@@ -23,7 +23,10 @@ def lookup_word():
 def trans_word(word):
     try:
         word = word.strip().lower()
-        res = trans_sess.translate(word)
+        format_type = request.args.get("format", "")
+        if not format_type:
+            format_type = "anki"
+        res = trans_sess.translate(format_type, word)
         res["status"] = "success"
         return jsonify(res)
     except Exception as e:

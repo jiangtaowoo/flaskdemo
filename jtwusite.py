@@ -7,6 +7,7 @@ import datetime
 import codecs
 import primaryschool
 import vocabulary
+import reading
 
 def create_app():
     app = Flask(__name__)
@@ -19,6 +20,7 @@ def create_app():
     #app.register_blueprint(vocabulary.bp_vocabulary)
     primaryschool.init_app(app)
     vocabulary.init_app(app)
+    reading.init_app(app)
     return app
 
 app = create_app()
@@ -76,18 +78,12 @@ def process_mdview(year,month,day,filename):
 """
 错误页面
 """
-@app.route('/404')
-def process_404():
-    errinfo = session.get('error_msg_404',None)
+@app.errorhandler(404)
+def handle_bad_request(err):
+    errinfo = session.get('error_msg_404', None)
     if errinfo:
         return render_template("404.html", err_msg=errinfo), 404
     return render_template("404.html"), 404
-
-"""
-@app.route('/test')
-def process_test():
-    return render_template('test.html')
-"""
 
 
 
