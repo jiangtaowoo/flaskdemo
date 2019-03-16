@@ -16,7 +16,8 @@ var g_curschema = {
 var content_pos = 0;
 
 function scrollWordCardIntoView(word) {
-    var index = app_card_container.cardnames.indexOf(word.trim());
+    word = word.trim().toLowerCase();
+    var index = app_card_container.cardnames.indexOf(word);
     if (index >= 0) {
         var voc_container = document.getElementById("app-voc-card");
         var need_height = 0;
@@ -40,7 +41,8 @@ function scrollWordContentIntoView(word) {
     var cur_top = content_elem.scrollTop;
     var cur_bottom = cur_top + content_elem.clientHeight;
     for (var idx in mark_elems) {
-        var index = mark_elems[idx].innerText.indexOf(word);
+        //console.log(mark_elems[idx].innerText);
+        var index = mark_elems[idx].innerText.toLowerCase().indexOf(word);
         if (index>=0) {
             dest_pos = mark_elems[idx].offsetTop;
             break;
@@ -55,6 +57,7 @@ function scrollWordContentIntoView(word) {
 /*输入部分单词时, 定位到对应的单词卡并显示*/
 function scrollPartialWordIntoView(partial_input) {
     var match_word = null;
+    partial_input = partial_input.trim().toLowerCase();
     for (var idx in app_card_container.cardnames) {
         var word = app_card_container.cardnames[idx];
         var index = word.indexOf(partial_input);
@@ -158,20 +161,21 @@ var app_keyword_search = new Vue({
                     restoreWordContentView();
                 }
                 if (this.wordtosearch.length > 1) {
+                    var markword = this.wordtosearch.toLowerCase()
                     instance_Content.unmark();
                     instance_Content.mark(app_card_container.cardnames);
-                    instance_Content.mark(this.wordtosearch);
-                    scrollPartialWordIntoView(this.wordtosearch);
-                    scrollWordContentIntoView(this.wordtosearch);
+                    instance_Content.mark(markword);
+                    scrollPartialWordIntoView(markword);
+                    scrollWordContentIntoView(markword);
                 }
             }
         },
         loadAnkiCard: function (event) {
             event.preventDefault();
             //console.log(event);
-            var sel_word = this.wordtosearch;
+            var sel_word = this.wordtosearch.trim().toLowerCase();
             if (sel_word.length < 3) {
-                sel_word = getSelectionText().trim();
+                sel_word = getSelectionText().trim().toLowerCase();
             }
             if (sel_word.length > 2) {
                 var content_elem = document.getElementById("app-left-whole-content");
@@ -187,11 +191,16 @@ var app_keyword_search = new Vue({
 */
 document.onkeyup = function (event) {
     if (event.key == "Enter") {
-        var sel_word = getSelectionText().trim();
+        var sel_word = getSelectionText().trim().toLowerCase();
         if (sel_word.length > 2) {
             instance_Content.mark(sel_word);
             ansyncLoadWord(sel_word);
         }
+    } else if (event.key == "Escape") {
+        app_keyword_search.wordtosearch = "";
+        instance_Content.unmark();
+        instance_Content.mark(app_card_container.cardnames);
+        restoreWordContentView();
     }
 };
 
@@ -199,7 +208,7 @@ document.onkeyup = function (event) {
 双击选中文本时, 如果单词表中包含了这个单词, 则滚动到当前位置显示
 */
 document.ondblclick = function (event) {
-    var sel_word = getSelectionText().trim();
+    var sel_word = getSelectionText().trim().toLowerCase();
     if (sel_word.length > 2) {
         scrollWordCardIntoView(sel_word);
     }
