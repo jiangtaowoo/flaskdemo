@@ -29,6 +29,7 @@ SHARED_STYLE:
     HTML_SPACE_BEFORE: "&nbsp;{0}"
     HTML_SPACE_AFTER: "{0}&nbsp;"
     HTML_HR: "{0}<hr>"
+    HTML_DICT_HEADER: "<span class='section-header'>{0}</span>"
     HTML_BOLD: "<b>{0}</b>"
     HTML_BOLD_LINE_BEFORE: "<br><b>{0}</b>"
     HTML_BOLD_LINE_AFTER: "<b>{0}</b><br>"
@@ -458,7 +459,7 @@ SCHEMAS:
         order: ['dictname', 'dictcontent']
         list_style: null
         dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
           dictcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_L0"}
       T_VOCABULARY_L0:
         delimiter: "<br>"
@@ -510,7 +511,7 @@ SCHEMAS:
         order: ['dictname', 'dictcontent']
         list_style: null
         dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
           dictcontent: {"type": "template", "data": "TEMPLATES.T_OXFORD_L0"}
       T_OXFORD_L0:
         delimiter: "<br>"
@@ -529,7 +530,7 @@ SCHEMAS:
         order: ['dictname', 'dictcontent']
         list_style: null
         dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
           dictcontent: {"type": "template", "data": "TEMPLATES.T_COLLINS_L0"}
       T_COLLINS_L0:
         delimiter: "<br>"
@@ -548,7 +549,7 @@ SCHEMAS:
         order: ['dictname', 'dictcontent']
         list_style: null
         dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
+          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
           dictcontent: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L0"}
       T_ENMEANS_L0:
         delimiter: "<br>"

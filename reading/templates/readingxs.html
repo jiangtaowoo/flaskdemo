@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>读书认字</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"-->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ url_for('reading.static', filename='css/vcard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('reading.static', filename='css/cardthemes.css') }}" rel="stylesheet">
+    <link href="{{ url_for('reading.static', filename='css/reader.css') }}" rel="stylesheet">
+    <script src="{{ url_for('reading.static', filename='js/mark.min.js') }}"></script>
+</head>
+
+<body>
+    <div id="app-tab-contentmain">
+        <div class="tab-pane" role="tabpanel">
+            <div v-show="showType==1" class="container">
+                <div class="row" style="justify-content: center; align-items: center; margin-bottom: 50px; padding-left: 8px; padding-right: 8px;">
+                    <div id="app-left-whole-content" class="container-fluid">
+                        <div class="row fiction_row">
+                            {{ fiction_content | safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" role="tabpanel">
+            <div v-show="showType==2" class="container">
+                <div class="row" style="justify-content: center; align-items: center; margin-bottom: 50px;">
+                    <div id="app-voc-card" class="container-fluid">
+                        <vocabulary-card v-for="(vcard,index) in cards" v-bind:vcard="vcard" v-bind:viewopt="schema"
+                            v-bind:key="vcard.front"></vocabulary-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav id="app-tabs-controller" class="tabs-below">
+        <ul class="nav nav-tabs navbar-inverse navbar-fixed-bottom" role="tablist">
+            <li v-bind:class="['nav-item', {active: curTab==1}]">
+                <a class="nav-link" id="app-content-tab" data-toggle="tab" role="tab" href="#" @click="setViewContent(1)">Content</a>
+            </li>
+            <li v-bind:class="['nav-item', {active: curTab==2}]">
+                <a class="nav-link" id="app-vocabulary-tab" data-toggle="tab" role="tab" href="#" @click="setViewContent(2)">Vocabulary</a>
+            </li>
+            <li class="nav-item">
+                <!--button type="button" class="btn btn-default" @click="searchWord"><i class="glyphicon glyphicon-search"></i></button-->
+                <a class="search_a" href="#" @click="searchWord">
+                    <i class="fa fa-search fa-lg" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</body>
+
+<template id="template-vcard">
+    <div class="vocabulary">
+        <div class="row">
+            <div class="card">
+                <div class="container-fluid">
+                    {% raw %}
+                    <span v-if="viewopt.front" v-html="vcard.front"></span>
+                    <span v-if="viewopt.posp" v-html="vcard.posp"></span>
+                    <span v-if="viewopt.transform" v-html="vcard.transform"></span>
+                    <span v-if="viewopt.tag" v-html="vcard.tag"></span>
+                    <span v-if="viewopt.audio" v-html="vcard.audio"></span>
+                    <span v-if="viewopt.basic" v-html="vcard.basic"></span>
+                    <span v-if="viewopt.mean" v-html="vcard.mean"></span>
+                    <span v-if="viewopt.vocabulary" v-html="vcard.vocabulary"></span>
+                    <span v-if="viewopt.oxford" v-html="vcard.oxford"></span>
+                    <span v-if="viewopt.collins" v-html="vcard.collins"></span>
+                    <span v-if="viewopt.enmean" v-html="vcard.enmean"></span>
+                    {% endraw %}
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 16px"></div>
+    </div>
+</template>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{{ url_for('reading.static', filename='js/readingxs.js') }}"></script>
+
+</html>

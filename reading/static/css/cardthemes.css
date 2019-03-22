@@ -1,0 +1,8 @@
+span.section-header {
+    display: block;
+    line-height: 42px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid #E7E7E7;
+    padding-left: 8px;   
+}
