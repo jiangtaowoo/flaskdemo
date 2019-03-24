@@ -927,5 +927,8 @@ class BDTranslation(object):
             schema_name = "html_card"
         else:
             schema_name = "database_raw"
-        res = word_obj.gen_batchcard_data(schema_name,{"word":pattern})
+        if "%" not in pattern:
+            res = [self._translate_request(schema_name, pattern.strip())]
+        else:
+            res = word_obj.gen_batchcard_data(schema_name,{"word":pattern})
         return res
