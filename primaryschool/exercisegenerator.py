@@ -102,7 +102,7 @@ def choose_another_number(CALC_TEMPLATES, templ_name, a, exclude_dict):
             num_candidates.remove(b)
             continue
         #是否满足进位要求
-        if need_addin and not _is_res_addin(op, a, b):
+        if (need_addin and not _is_res_addin(op,a,b)) or (_is_res_addin(op,a,b) and not need_addin):
             num_candidates.remove(b)
             continue
         break

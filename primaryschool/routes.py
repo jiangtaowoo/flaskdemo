@@ -35,9 +35,9 @@ def template_editor():
             return render_template("bootstrap_basic.html",
                 body_content=schemamgr.list_templates())
         else:
-            return jsonify(["Unkown Error!"])
+            return jsonify(["Unkown Error 1!"])
     else:
-        return jsonify(["Unkown Error!"])
+        return jsonify(["Unkown Error 2!"])
 
 
 """

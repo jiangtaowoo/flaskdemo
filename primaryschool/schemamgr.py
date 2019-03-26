@@ -81,11 +81,13 @@ def write_template(templ_name, request):
         #write data to file
         thetemplates = load_templates()
         thetemplates["TEMPLATE_L2"][templ_name] = newmodel
-        filename = os.sep.join([".","models","calcmodel.yaml"])
+        cur_dir = os.path.dirname(os.path.abspath(__file__))
+        filename = os.sep.join([cur_dir,"models","calcmodel.yaml"])
         with open(filename,"w") as outf:
             yaml.safe_dump(thetemplates, outf, encoding="utf-8", allow_unicode=True)
         return True
     except Exception as e:
+        print(e)
         return False
 
 def list_templates():
