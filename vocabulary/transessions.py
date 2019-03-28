@@ -131,7 +131,7 @@ class VCardRenderer(object):
 
     @staticmethod
     def _meta_render(schema_node, data):
-        
+
         渲染的情况分为:
         1. 为list数据进行渲染
            a. 方式一: list中的每个元素均采用一个模板渲染(RAW_STYLE)
@@ -139,7 +139,7 @@ class VCardRenderer(object):
         2. 为dict数据进行渲染
            a. 方式一: 根据key匹配渲染模板, 将value按模板渲染
            b. 方式二: 根据key匹配渲染模板, 将key, value按模板渲染
-        
+
         #只支持字符串渲染
         if not compat.is_str_or_unicode(data):
             return data
@@ -156,7 +156,7 @@ class VCardRenderer(object):
         1. type == raw, 直接 .format(data) 完成渲染
         2. type == style, 调用 basic_render 完成渲染
         3. type == template, 调用 _iter_render 递归完成渲染
-        
+
         if not schema_node:
             return data
         if "delimiter" in schema_node:
@@ -324,7 +324,7 @@ class VCardRenderer(object):
 
     #生成FlashCard格式的结果数据, 一行数据, 允许使用HTML标识
     def render(self, vcardinst, schema_name):
-        
+
         flashcard data contains the following fields:
         { front:     单词本身(from db)
           posp:      词性(根据已有数据计算得到)
@@ -338,7 +338,7 @@ class VCardRenderer(object):
           collins:   柯林斯词典翻译,例句
           enmean:    英文翻译,例句
         }
-        
+
         schemas = self.schemas
         schema_tree = self.schema_tree
         res_dict = {}
@@ -609,8 +609,7 @@ class WordStorageModel(object):
         #递归查找每个dict项, 如果其仍然包含data子项, 递归下去
         def _iter_extract_data_ox(data, result):
             #只处理entry, p-g节点的data内容
-            if "tag" in data and data["tag"] in ["entry","h-g","p-g","n-g"] \
-                and "data" in data and isinstance(data["data"],list):
+            if "tag" in data and "data" in data and isinstance(data["data"],list):
                 for d in data['data']:
                     if isinstance(d, dict):
                         _iter_extract_data_ox(d, result)
@@ -828,11 +827,11 @@ class WordStorageModel(object):
                 <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>
                 <link href='https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
                 <link href='/vocabulary/static/css/render-theme-default.css' rel='stylesheet'>
-                <style> 
-                    html a.audio { 
-                        text-decoration: none !important; 
-                        font-size: 22px; 
-                        padding: 0 0 0 .75em; 
+                <style>
+                    html a.audio {
+                        text-decoration: none !important;
+                        font-size: 22px;
+                        padding: 0 0 0 .75em;
                         cursor: pointer;}
                 </style>
             </head>
