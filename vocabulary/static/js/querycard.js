@@ -3,7 +3,7 @@ var g_schemas = {
   'simple': ['front', 'posp', 'audio', 'basic', 'stat',  'mean'],
   'vocabulary': ['front', 'posp', 'audio', 'basic', 'stat', 'mean', 'vocabulary'],
   'oxford': ['front', 'posp', 'audio', 'basic', 'stat', 'mean', 'oxford'],
-  'full': ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'stat', 'mean', 'vocabulary', 'oxford', 'collins', 'enmean']
+  'full': ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'stat', 'mean', 'vocabulary', 'oxford', 'collins', 'enmeans']
 };
 var g_curschema = {
   'front': false,
@@ -17,7 +17,7 @@ var g_curschema = {
   'vocabulary': false,
   'oxford': false,
   'collins': false,
-  'enmean': false
+  'enmeans': false
 };
 
 function setViewOptionBySchemaName(schemaname, schemaViewDict) {
@@ -60,20 +60,48 @@ var app_schema = new Vue({
   },
   computed: {
     options: function () {
-      var op_list = []
+      var op_list = [];
       for (var name in this.schemas) {
         op_list.push({
           text: name,
           value: name
-        })
+        });
       }
-      return op_list
+      return op_list;
     }
   },
   methods: {
     refreshCardViewOption: function () {
-      setViewOptionBySchemaName(this.selected, g_curschema)
-      Vue.set(app_cards, "schema", g_curschema)
+      setViewOptionBySchemaName(this.selected, g_curschema);
+      Vue.set(app_cards, "schema", g_curschema);
+    }
+  }
+});
+
+var app_themes = new Vue({
+  el: '#app-sel-theme',
+  data: {
+    seltheme: "theme-default",
+    schemas: {'theme-default': '/vocabulary/static/css/render-theme-light.css', 
+              'theme-dark':'/vocabulary/static/css/render-theme-dark.css',
+              'theme-solarized': '/vocabulary/static/css/render-theme-solarized.css'}
+  },
+  computed: {
+    options: function () {
+      var op_list = [];
+      for (var name in this.schemas) {
+        op_list.push({
+          text: name,
+          value: name
+        });
+      }
+      return op_list;
+    }
+  },
+  methods: {
+    refreshCardTheme: function () {
+      console.log(this.seltheme);
+      document.getElementById("style-render-theme").setAttribute("href", this.schemas[this.seltheme]);
     }
   }
 });

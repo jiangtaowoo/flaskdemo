@@ -7,7 +7,7 @@ vocabulary.api
 from . import transessions
 
 def session():
-    return transessions.BDTranslation()
+    return transessions.ENTranslation()
 
 def translate(format_type, word):
     """Constructs and sends a translation request
@@ -18,7 +18,7 @@ def translate(format_type, word):
       >>> res = vocabulary.translate('immature')
       <Response json>
     """
-    with transessions.BDTranslation() as session:
+    with transessions.ENTranslation() as session:
         return session.translate(format_type, word)
 
 def query(format_type, pattern):
@@ -31,5 +31,5 @@ def query(format_type, pattern):
       >>> res = vocabulary.query('con*')
       <Response html string>
     """
-    with transessions.BDTranslation() as session:
+    with transessions.ENTranslation() as session:
         return session.query(format_type, pattern)

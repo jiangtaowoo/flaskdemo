@@ -6,6 +6,7 @@ SHARED_STYLE:
         adj: "<b class='label label-warning'>{0}</b>"
         "adj.": "<b class='label label-warning'>{0}</b>"
         "形容词": "<b class='label label-warning'>{0}</b>"
+        "adj-graded": "<b class='label label-warning'>{0}</b>"
         adv: "<b class='label label-info'>{0}</b>"
         "adv.": "<b class='label label-info'>{0}</b>"
         "副词": "<b class='label label-info'>{0}</b>"
@@ -13,6 +14,8 @@ SHARED_STYLE:
         noun: "<b class='label label-danger'>{0}</b>"
         "n.": "<b class='label label-danger'>{0}</b>"
         "名词": "<b class='label label-danger'>{0}</b>"
+        "n-uncount": "<b class='label label-danger'>{0}</b>"
+        "n-count": "<b class='label label-danger'>{0}</b>"
         v: "<b class='label label-success'>{0}</b>"
         "v.": "<b class='label label-success'>{0}</b>"
         vi: "<b class='label label-success'>{0}</b>"
@@ -43,580 +46,505 @@ SHARED_STYLE:
     HTML_BOOTSTRAP_PANEL_TITLE_1: "<div class='panel-heading'><h4 class='panel-title text-center'><a data-toggle='collapse' href='#collapse1'>{0}</a></h4></div>"
     HTML_BOOTSTRAP_PANEL_BODY_1: <div id='collapse1' class='panel-collapse collapse'><div class='panel-body'>{0}</div></div>"
     HTML_BOOTSTRAP_PANEL_FORDICT: "<div class='panel panel-success'><div class='panel-heading'><h3 class='panel-title'>{0}</h3></div></div>"
+    HTML_FRONT_SIDE: "<div class='render-front-side'>{0}</div>"
 SCHEMAS:
   database_raw:
     SEGMENTS:
       front:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       audio:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       posp:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       basic:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       transform:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       tag:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       stat:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       mean:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       vocabulary:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       oxford:
-        outer: null
-        inner: null
+        highlight: null
+        template: null
       collins:
-        outer: null
-        inner: null
-      enmean:
-        outer: null
-        inner: null
-  anki_card:
-    TEMPLATES:
-      T_LIST_HTMLLINE:
-        delimiter: "<br>"
-        order: null
-        list_style: null
-        dict_style: null
-      T_LIST_SPACE:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-      T_POSP:
-        delimiter: " "
-        order: null
-        list_style: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-        dict_style: null
-      T_BASIC:
-        delimiter: " "
-        order: ["wordem", "ph_am", "ph_en", "mean"]
-        list_style: null
-        dict_style:
-          wordem: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD_RED"}
-          ph_am: {"type": "raw", "data": "美[{0}]"}
-          ph_en: {"type": "raw", "data": "英[{0}]"}
-          mean: {"type": "raw", "data": "<b>{0}</b>"}
-      T_TRANSFORM:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style:
-          word_third: {"type": "raw", "data": "第三人称单数:{0}"}
-          word_done: {"type": "raw", "data": "过去分词:{0}"}
-          word_pl: {"type": "raw", "data": "复数:{0}"}
-          word_est: {"type": "raw", "data": "EST:{0}"}
-          word_ing: {"type": "raw", "data": "现在分词:{0}"}
-          word_er: {"type": "raw", "data": "ER:{0}"}
-          word_past: {"type": "raw", "data": "过去式:{0}"}
-      T_TAG:
-        delimiter: " "
-        order: null
-        list_style: {"type": "raw", "data": "<b class='label label-default'>{0}</b>"}
-        dict_style: null
-      T_STAT:
-        delimiter: " "
-        order: ['basic', 'posp']
-        list_style: null
-        dict_style: 
-          basic: {"type": "template", "data": "TEMPLATES.T_STAT_LB0"}
-          posp: {"type": "template", "data": "TEMPLATES.T_STAT_LP0"}
-      T_STAT_LB0:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv :
-          key: null
-          value: {"type": "template", "data": "TEMPLATES.T_STAT_LB1"}
-          kvconnector: "{1}"
-      T_STAT_LB1:
-        delimiter: ""
-        order: ['sense', 'percent']
-        list_style: null
-        dict_style: 
-          sense: {"type": "raw", "data": "{0}"}
-          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
-      T_STAT_LP0:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv :
-          key: null
-          value: {"type": "template", "data": "TEMPLATES.T_STAT_LP1"}
-          kvconnector: "{1}"
-      T_STAT_LP1:
-        delimiter: ""
-        order: ['pos', 'percent']
-        list_style: null
-        dict_style: 
-          pos: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
-      T_MEAN:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_MEAN_L0"}
-        dict_style: null
-      T_MEAN_L0:
-        delimiter: " "
-        order: ["posp", "mean"]
-        list_style: null
-        dict_style: 
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          mean: null
-      T_AUDIO:
-        delimiter: ""
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv:
-          key: null
-          value: null
-          kvconnector: "<audio id='{0}' src='{1}' preload='none'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
-      T_VOCABULARY:
-        delimiter: ""
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_PANEL_TITLE"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_L0"}
-      T_VOCABULARY_L0:
-        delimiter: "<br>"
-        order: ['main', 'definition', 'definition_brief']
-        list_style: null
-        dict_style:
-          main: null
-          definition: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION"}
-          definition_brief: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_BRIEF"}
-      T_VOCABULARY_DEFINITION_BRIEF:
-        delimiter: ""
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_BRIEF_ITEM"}
-        dict_style: null
-      T_VOCABULARY_BRIEF_ITEM:
-        delimiter: " "
-        order: ['posp', 'definition']
-        list_style: null
-        dict_style:
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          definition: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_AFTER"}
-      T_VOCABULARY_DEFINITION:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_ITEM"}
-        dict_style: null
-      T_VOCABULARY_DEFINITION_ITEM:
-        delimiter: " "
-        order: ['posp', 'definition', 'defcontent']
-        list_style: null
-        dict_style:
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          definition: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_AFTER"}
-          defcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT"}
-      T_VOCABULARY_DEFINITION_DEFCONTENT:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM"}
-        dict_style: null
-      T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM:
-        delimiter: ""
-        order: ['dt', 'dd']
-        list_style: null
-        dict_style:
-          dt: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD_LINE_AFTER"}
-          dd: {"type": "template", "data": "TEMPLATES.T_LIST_HTMLLINE"}
-      T_OXFORD:
-        delimiter: ""
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_PANEL_TITLE"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_OXFORD_L0"}
-      T_OXFORD_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_OXFORD_L1"}
-        dict_style: null
-      T_OXFORD_L1:
-        delimiter: " "
-        order: ['en', 'zh']
-        list_style: null
-        dict_style:
-          en: null
-          zh: null
-      T_COLLINS:
-        delimiter: ""
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_PANEL_TITLE"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_COLLINS_L0"}
-      T_COLLINS_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_COLLINS_L1"}
-        dict_style: null
-      T_COLLINS_L1:
-        delimiter: " "
-        order: ['en', 'zh']
-        list_style: null
-        dict_style:
-          en: null
-          zh: null
-      T_ENMEANS:
-        delimiter: ""
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_PANEL_TITLE"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L0"}
-      T_ENMEANS_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L1"}
-        dict_style: null
-      T_ENMEANS_L1:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv:
-          key: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          value: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L2"}
-          kvconnector: "{0} {1}"
-      T_ENMEANS_L2:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L3"}
-        dict_style: null
-      T_ENMEANS_L3:
-        delimiter: "  "
-        order: ['tr', 'example', 'similar_word']
-        list_style: null
-        dict_style:
-          tr: {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
-          example: {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
-          similar_word:  {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
-    SEGMENTS:
-      front:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: null
-      basic:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_BASIC"}
-      posp:
-        outer: null
-        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
-      audio:
-        outer: null
-        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
-      tag:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
-      transform:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
-      mean:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
-      stat:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
-        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
-      vocabulary:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_VOCABULARY"}
-      oxford:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_OXFORD"}
-      collins:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_COLLINS"}
-      enmean:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOOTSTRAP_DIV"}
-        inner: {"type": "template", "data": "TEMPLATES.T_ENMEANS"}
+        highlight: null
+        template: null
+      enmeans:
+        highlight: null
+        template: null
   html_card:
     TEMPLATES:
-      T_LIST_HTMLLINE:
-        delimiter: "<br>"
-        order: null
-        list_style: null
-        dict_style: null
-      T_LIST_SPACE:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-      T_POSP:
-        delimiter: " "
-        order: null
-        list_style: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-        dict_style: null
       T_BASIC:
-        delimiter: " "
-        order: ["wordem", "ph_am", "ph_en", "mean"]
-        list_style: null
-        dict_style:
-          wordem: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD_RED"}
-          ph_am: {"type": "raw", "data": "美[{0}]"}
-          ph_en: {"type": "raw", "data": "英[{0}]"}
-          mean: {"type": "raw", "data": "<b>{0}</b>"}
-      T_TRANSFORM:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style:
-          word_third: {"type": "raw", "data": "第三人称单数:{0}"}
-          word_done: {"type": "raw", "data": "过去分词:{0}"}
-          word_pl: {"type": "raw", "data": "复数:{0}"}
-          word_est: {"type": "raw", "data": "EST:{0}"}
-          word_ing: {"type": "raw", "data": "现在分词:{0}"}
-          word_er: {"type": "raw", "data": "ER:{0}"}
-          word_past: {"type": "raw", "data": "过去式:{0}"}
-      T_TAG:
-        delimiter: " "
-        order: null
-        list_style: {"type": "raw", "data": "<b class='label label-default'>{0}</b>"}
-        dict_style: null
-      T_STAT:
-        delimiter: " "
-        order: ['basic', 'posp']
-        list_style: null
-        dict_style: 
-          basic: {"type": "template", "data": "TEMPLATES.T_STAT_LB0"}
-          posp: {"type": "template", "data": "TEMPLATES.T_STAT_LP0"}
-      T_STAT_LB0:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv :
-          key: null
-          value: {"type": "template", "data": "TEMPLATES.T_STAT_LB1"}
-          kvconnector: "{1}"
-      T_STAT_LB1:
-        delimiter: ""
-        order: ['sense', 'percent']
-        list_style: null
-        dict_style: 
-          sense: {"type": "raw", "data": "{0}"}
-          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
-      T_STAT_LP0:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv :
-          key: null
-          value: {"type": "template", "data": "TEMPLATES.T_STAT_LP1"}
-          kvconnector: "{1}"
-      T_STAT_LP1:
-        delimiter: ""
-        order: ['pos', 'percent']
-        list_style: null
-        dict_style: 
-          pos: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          percent: {"type": "raw", "data": "<span style='color: OLIVE'>({0}%)</span>"}
-      T_MEAN:
-        delimiter: " "
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_MEAN_L0"}
-        dict_style: null
-      T_MEAN_L0:
-        delimiter: " "
-        order: ["posp", "mean"]
-        list_style: null
-        dict_style: 
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          mean: null
+        bracket: "<div class='render-part-basic'>{0}</div>"
+        datatype: dict
+        style:
+          order: ["wordem", "audio", "ph_am", "ph_en", "mean"]
+          delimiter: " "
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              wordem: {"type": "raw", "data": "<span class='render-part-basic-wordem'>{0}</span>"}
+              audio: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
+              ph_am: {"type": "raw", "data": "<span class='render-part-basic-phonetic'><span class='render-phonetic-name'>美</span>[{0}]</span>"}
+              ph_en: {"type": "raw", "data": "<span class='render-part-basic-phonetic'><span class='render-phonetic-name'>英</span>[{0}]</span>"}
+              mean: {"type": "raw", "data": "<span class='render-part-basic-mean'>{0}</span>"}
+      T_POSP:
+        bracket: "<div class='render-part-posp'>{0}</div>"
+        datatype: list
+        style:
+          delimiter: " "
+          format: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
       T_AUDIO:
-        delimiter: ""
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv:
-          key: null
-          value: null
+        bracket: "<span class='render-part-audio'>{0}</span>"
+        datatype: dict
+        style:
+          order: null
+          delimiter: ""
           kvconnector: "<audio id='{0}' src='{1}' preload='none'></audio><a class='audio fa fa-volume-up' aria-hidden='true' onclick=\"document.getElementById('{0}').play()\"></a>"
+          use: kv
+          format: null
+      T_TAG:
+        bracket: "<div class='render-part-tag'>{0}</div>"
+        datatype: list
+        style:
+          delimiter: " "
+          format: {"type": "raw", "data": "<span class='render-part-tag-item'>{0}</span>"}
+      T_TRANSFORM:
+        bracket: "<div class='render-part-transform'>{0}</div>"
+        datatype: dict
+        style:
+          order: ["word_pl", "word_er", "word_third", "word_past", "word_done", "word_ing", "word_est"]
+          delimiter: " "
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              word_third: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>第三人称单数:</span>{0}</span>"}
+              word_done: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>过去分词:</span>{0}</span>"}
+              word_pl: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>复数:</span>{0}</span>"}
+              word_est: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>最高级:</span>{0}</span>"}
+              word_ing: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>现在分词:</span>{0}</span>"}
+              word_er: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>ER:</span>{0}</span>"}
+              word_past: {"type": "raw", "data": "<span class='render-part-transform-item'><span class='render-transform-name'>过去式:</span>{0}</span>"}
+      T_MEAN:
+        bracket: "<div class='render-part-mean'>{0}</div>"  #[{posp: xx, means:[a, b, c]}, {}]
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_MEAN_L0"}
+      T_MEAN_L0:
+        bracket: "<span class='render-part-mean-item'>{0}</span>"
+        datatype: dict
+        style:
+          order: ["posp", "means"]
+          delimiter: " "
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              means: {"type": "template", "data": "TEMPLATES.T_MEAN_L1"}
+      T_MEAN_L1:
+        bracket: "<span class='render-part-mean-item-data'>{0}</span>"  #[a, b, c]
+        datatype: list
+        style:
+          delimiter: "; "
+          format: {"type": "raw", "data": "{0}"}
+      T_STAT:
+        bracket: "<div class='render-part-stat'>{0}</div>"
+        datatype: dict
+        style:
+          order: ["basic", "posp"]
+          delimiter: " "
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              basic: {"type": "template", "data": "TEMPLATES.T_STAT_LB0"}
+              posp: {"type": "template", "data": "TEMPLATES.T_STAT_LP0"}
+      T_STAT_LB0:
+        bracket: "<span class='render-part-stat-basic'>{0}</span>"
+        datatype: dict
+        style:
+          order: null
+          delimiter: " "
+          kvconnector: "{1}"
+          use: kv
+          format:
+            type: inline
+            data:
+              key: null
+              value: {"type": "template", "data": "TEMPLATES.T_STAT_LB1"}
+      T_STAT_LB1:
+        bracket: ""
+        datatype: dict
+        style:
+          order: ['sense', 'percent']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              sense: {"type": "raw", "data": "<span class='render-part-stat-basic-sense'>{0}</span>"}
+              percent: {"type": "raw", "data": "<span class='render-part-stat-basic-percent'>({0}%)</span>"}
+      T_STAT_LP0:
+        bracket: "<span class='render-part-stat-posp'>{0}</span>"
+        datatype: dict
+        style:
+          order: null
+          delimiter: " "
+          kvconnector: "{1}"
+          use: kv
+          format:
+            type: inline
+            data:
+              key: null
+              value: {"type": "template", "data": "TEMPLATES.T_STAT_LP1"}
+      T_STAT_LP1:
+        bracket: ""
+        datatype: dict
+        style:
+          order: ['pos', 'percent']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              pos: {"type": "raw", "data": "<span class='render-part-stat-posp-pos'>{0}</span>"}
+              percent: {"type": "raw", "data": "<span class='render-part-stat-posp-percent'>({0}%)</span>"}
       T_VOCABULARY:
-        delimiter: "<br>"
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_L0"}
+        bracket: "<span class='render-part-vocabulary-container'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['dictname', 'dictcontent']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              dictname: {"type": "raw", "data": "<div class='render-part-dictname'>{0}</div>"}
+              dictcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_L0"}
       T_VOCABULARY_L0:
-        delimiter: "<br>"
-        order: ['main', 'definition', 'definition_brief']
-        list_style: null
-        dict_style:
-          main: null
-          definition: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION"}
-          definition_brief: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_BRIEF"}
+        bracket: "<span class='render-part-vocabulary-details'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['main', 'definition', 'definition_brief']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              main: {"type": "raw", "data": "<span class='render-part-vocabulary-main'>{0}</span>"}
+              definition: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION"}
+              definition_brief: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_BRIEF"}
       T_VOCABULARY_DEFINITION_BRIEF:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_BRIEF_ITEM"}
-        dict_style: null
+        bracket: "<span class='render-part-vocabulary-brief'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_BRIEF_ITEM"}
       T_VOCABULARY_BRIEF_ITEM:
-        delimiter: " "
-        order: ['posp', 'definition']
-        list_style: null
-        dict_style:
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          definition: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_AFTER"}
+        bracket: "<span class='render-part-vocabulary-brief-item'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['posp', 'definition']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              definition: {"type": "raw", "data": "<span class='render-part-vocabulary-brief-item-def'>{0}</span>"}
       T_VOCABULARY_DEFINITION:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_ITEM"}
-        dict_style: null
+        bracket: "<span class='render-part-vocabulary-def'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_ITEM"}
       T_VOCABULARY_DEFINITION_ITEM:
-        delimiter: " "
-        order: ['posp', 'definition', 'defcontent']
-        list_style: null
-        dict_style:
-          posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          definition: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_AFTER"}
-          defcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT"}
+        bracket: "<span class='render-part-vocabulary-def-item'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['posp', 'definition', 'defcontent']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              definition: {"type": "raw", "data": "<span class='render-part-vocabulary-def-item-def'>{0}</span>"}
+              defcontent: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT"}
       T_VOCABULARY_DEFINITION_DEFCONTENT:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM"}
-        dict_style: null
+        bracket: ""
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM"}
       T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM:
-        delimiter: "<br>"
-        order: ['dt', 'dd']
-        list_style: null
-        dict_style:
-          dt: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
-          dd: {"type": "template", "data": "TEMPLATES.T_LIST_HTMLLINE"}
+        bracket: "<span class='render-part-vocabulary-def-item-def-contentitem'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['dt', 'dd']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              dt: {"type": "raw", "data": "<span class='render-part-vocabulary-content-dt'>{0}</span>"}
+              dd: {"type": "template", "data": "TEMPLATES.T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM_DD"}
+      T_VOCABULARY_DEFINITION_DEFCONTENT_ITEM_DD:
+        bracket: ""
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "raw", "data": "<span class='render-part-vocabulary-content-dd'>{0}</span>"}
       T_OXFORD:
-        delimiter: "<br>"
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_OXFORD_L0"}
+        bracket: "<span class='render-part-oxford-container'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['dictname', 'dictcontent']    #[{posp:verb, means:[{en,zh},{en,zh}], examples:[{en,zh},{en,zh}]},{},...]
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              dictname: {"type": "raw", "data": "<div class='render-part-dictname'>{0}</div>"}
+              dictcontent: {"type": "template", "data": "TEMPLATES.T_OXFORD_L0"}
       T_OXFORD_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_OXFORD_L1"}
-        dict_style: null
+        bracket: "<span class='render-part-oxford-details'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_OXFORD_L1"}
       T_OXFORD_L1:
-        delimiter: " "
-        order: ['en', 'zh']
-        list_style: null
-        dict_style:
-          en: null
-          zh: null
+        bracket: "<span class='render-part-oxford-item'>{0}</span>"
+        datatype: dict  #{posp:verb, means:[{en,zh},{en,zh}], examples:[{en,zh},{en,zh}]}
+        style:
+          order: ['posp', 'means', 'examples']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              means: {"type": "template", "data": "TEMPLATES.T_OXFORD_L2_DEF"}
+              examples: {"type": "template", "data": "TEMPLATES.T_OXFORD_L2_EXAMPLE"}
+      T_OXFORD_L2_DEF:
+        bracket: "<span class='render-part-oxford-item-def'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_OXFORD_L2_DEF_ITEM"}
+      T_OXFORD_L2_DEF_ITEM:
+        bracket: "<span class='render-part-oxford-item-def-enzh'>{0}</span>"
+        datatype: dict  #{en,zh}
+        style:
+          order: ['en', 'zh']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              en: {"type": "raw", "data": "<span class='render-part-oxford-item-def-enzh-en'>{0}</span>"}
+              zh: {"type": "raw", "data": "<span class='render-part-oxford-item-def-enzh-zh'>{0}</span>"}
+      T_OXFORD_L2_EXAMPLE:
+        bracket: "<span class='render-part-oxford-item-x'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_OXFORD_L2_EXAMPLE_ITEM"}
+      T_OXFORD_L2_EXAMPLE_ITEM:
+        bracket: "<span class='render-part-oxford-item-x-enzh'>{0}</span>"
+        datatype: dict  #{en,zh}
+        style:
+          order: ['en', 'zh']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              en: {"type": "raw", "data": "<span class='render-part-oxford-item-x-enzh-en'>{0}</span>"}
+              zh: {"type": "raw", "data": "<span class='render-part-oxford-item-x-enzh-zh'>{0}</span>"}
       T_COLLINS:
-        delimiter: "<br>"
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_COLLINS_L0"}
+        bracket: "<span class='render-part-collins-container'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['dictname', 'dictcontent']    #[{posp:verb, means:[{en,zh},{en,zh}], examples:[{en,zh},{en,zh}]},{},...]
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              dictname: {"type": "raw", "data": "<div class='render-part-dictname'>{0}</div>"}
+              dictcontent: {"type": "template", "data": "TEMPLATES.T_COLLINS_L0"}
       T_COLLINS_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_COLLINS_L1"}
-        dict_style: null
+        bracket: "<span class='render-part-collins-details'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_COLLINS_L1"}
       T_COLLINS_L1:
-        delimiter: " "
-        order: ['en', 'zh']
-        list_style: null
-        dict_style:
-          en: null
-          zh: null
+        bracket: "<span class='render-part-collins-item'>{0}</span>"
+        datatype: dict  #{posp:verb, means:[{en,zh},{en,zh}], examples:[{en,zh},{en,zh}]}
+        style:
+          order: ['posp', 'means', 'examples']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              means: {"type": "template", "data": "TEMPLATES.T_COLLINS_L2_DEF"}
+              examples: {"type": "template", "data": "TEMPLATES.T_COLLINS_L2_EXAMPLE"}
+      T_COLLINS_L2_DEF:
+        bracket: "<span class='render-part-collins-item-def'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_COLLINS_L2_DEF_ITEM"}
+      T_COLLINS_L2_DEF_ITEM:
+        bracket: "<span class='render-part-collins-item-def-enzh'>{0}</span>"
+        datatype: dict  #{en,zh}
+        style:
+          order: ['en', 'zh']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              en: {"type": "raw", "data": "<span class='render-part-collins-item-def-enzh-en'>{0}</span>"}
+              zh: {"type": "raw", "data": "<span class='render-part-collins-item-def-enzh-zh'>{0}</span>"}
+      T_COLLINS_L2_EXAMPLE:
+        bracket: "<span class='render-part-collins-item-x'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_COLLINS_L2_EXAMPLE_ITEM"}
+      T_COLLINS_L2_EXAMPLE_ITEM:
+        bracket: "<span class='render-part-collins-item-x-enzh'>{0}</span>"
+        datatype: dict  #{en,zh}
+        style:
+          order: ['en', 'zh']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              en: {"type": "raw", "data": "<span class='render-part-collins-item-x-enzh-en'>{0}</span>"}
+              zh: {"type": "raw", "data": "<span class='render-part-collins-item-x-enzh-zh'>{0}</span>"}
       T_ENMEANS:
-        delimiter: "<br>"
-        order: ['dictname', 'dictcontent']
-        list_style: null
-        dict_style:
-          dictname: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_DICT_HEADER"}
-          dictcontent: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L0"}
+        bracket: "<span class='render-part-enmeans-container'>{0}</span>"
+        datatype: dict
+        style:
+          order: ['dictname', 'dictcontent']    #[{posp:verb, means:[{en,zh},{en,zh}], examples:[{en,zh},{en,zh}]},{},...]
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              dictname: {"type": "raw", "data": "<div class='render-part-dictname'>{0}</div>"}
+              dictcontent: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L0"}
       T_ENMEANS_L0:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L1"}
-        dict_style: null
+        bracket: "<span class='render-part-enmeans-details'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L1"}
       T_ENMEANS_L1:
-        delimiter: " "
-        order: null
-        list_style: null
-        dict_style: null
-        dict_style_kv:
-          key: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
-          value: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L2"}
-          kvconnector: "{0} {1}"
-      T_ENMEANS_L2:
-        delimiter: "<br>"
-        order: null
-        list_style: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L3"}
-        dict_style: null
-      T_ENMEANS_L3:
-        delimiter: "  "
-        order: ['tr', 'example', 'similar_word']
-        list_style: null
-        dict_style:
-          tr: {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
-          example: {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
-          similar_word:  {"type": "template", "data": "TEMPLATES.T_LIST_SPACE"}
+        bracket: "<span class='render-part-enmeans-item'>{0}</span>"
+        datatype: dict  #{posp:verb, means:[en,,en], examples:[en,en]}
+        style:
+          order: ['posp', 'means', 'examples']
+          delimiter: ""
+          kvconnector: null
+          use: v
+          format:
+            type: inline
+            data:
+              posp: {"type": "style", "data": "SHARED_STYLE.MAP_STYLE.POSP"}
+              means: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L2_DEF"}
+              examples: {"type": "template", "data": "TEMPLATES.T_ENMEANS_L2_EXAMPLE"}
+      T_ENMEANS_L2_DEF:
+        bracket: "<span class='render-part-enmeans-item-def'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "raw", "data": "<span class='render-part-enmeans-item-def-en'>{0}</span>"}
+      T_ENMEANS_L2_EXAMPLE:
+        bracket: "<span class='render-part-enmeans-item-x'>{0}</span>"
+        datatype: list
+        style:
+          delimiter: ""
+          format: {"type": "raw", "data": "<span class='render-part-enmeans-item-x-en'>{0}</span>"}
     SEGMENTS:
       front:
-        highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: null
-        inner: null
+        highlight: null
+        template: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_FRONT_SIDE"}
       basic:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_BASIC"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_BASIC"}
       posp:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_POSP"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_POSP"}
       audio:
-        outer: null
-        inner: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
-      transform:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_AUDIO"}
       tag:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_TAG"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_TAG"}
+      transform:
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_TRANSFORM"}
       mean:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_SPACE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_MEAN"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_MEAN"}
       stat:
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_BOLD"}
-        inner: {"type": "template", "data": "TEMPLATES.T_STAT"}
+        highlight: null
+        template: {"type": "template", "data": "TEMPLATES.T_STAT"}
       vocabulary:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_VOCABULARY"}
+        template: {"type": "template", "data": "TEMPLATES.T_VOCABULARY"}
       oxford:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_OXFORD"}
+        template: {"type": "template", "data": "TEMPLATES.T_OXFORD"}
       collins:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_COLLINS"}
-      enmean:
+        template: {"type": "template", "data": "TEMPLATES.T_COLLINS"}
+      enmeans:
         highlight: "SHARED_STYLE.RAW_STYLE.HTML_BOLD"
-        outer: {"type": "style", "data": "SHARED_STYLE.RAW_STYLE.HTML_LINE_BEFORE"}
-        inner: {"type": "template", "data": "TEMPLATES.T_ENMEANS"}
+        template: {"type": "template", "data": "TEMPLATES.T_ENMEANS"}

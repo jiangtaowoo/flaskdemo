@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="{{ url_for('vocabulary.static', filename='css/vcard.css') }}" rel="stylesheet">
+  <link id="style-render-theme" href="{{ url_for('vocabulary.static', filename='css/render-theme-default.css') }}" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="margin-top: 10px; margin-bottom: 10px;">
     <div class="row">
-      <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div>
-      <div class="col-xs-* col-sm-* col-md-* col-lg-10">
+      <!--div class="col-xs-0 col-sm-0 col-md-0 col-lg-1"></div-->
+      <!--div class="col-xs-* col-sm-* col-md-* col-lg-10"-->
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
           <select id="app-sel-schema" v-model="selected" v-on:change="refreshCardViewOption" class="form-control">
             <option v-for="option in options" v-bind:value="option.value" v-bind:key="option.value">
@@ -21,16 +21,25 @@
             </option>
           </select>
         </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+          <select id="app-sel-theme" v-model="seltheme" v-on:change="refreshCardTheme" class="form-control">
+            <option v-for="option in options" v-bind:value="option.value" v-bind:key="option.value">
+              {% raw %}
+              {{ option.text }}
+              {% endraw %}
+            </option>
+          </select>
+        </div>
+        <!--div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"-->
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
           <div class="active-cyan-4 mb-4">
             <input id="app-word-toquery" v-model="word" v-on:keyup="queryVocabulary" class="form-control text-center"
               type="text" placeholder="Search" aria-label="Search">
           </div>
         </div>
-      </div>
+      <!--/div-->
     </div>
   </div>
-  <br>
   <div id="app-vocabulary-card" class="container">
     <vocabulary-card v-for="(vcard,index) in cards" v-bind:vcard="vcard" v-bind:viewopt="schema" v-bind:vindex="index+1"
       v-bind:key="vcard.front"></vocabulary-card>
@@ -47,17 +56,17 @@
             {% raw %}
             <b v-if="viewopt.front"> {{ vindex }} &nbsp;</b>
             <span v-if="viewopt.front" v-html="vcard.front"></span>
-            <span v-if="viewopt.posp" v-html="vcard.posp"></span>
-            <span v-if="viewopt.audio" v-html="vcard.audio"></span>
+            <!--span v-if="viewopt.posp" v-html="vcard.posp"></span-->
+            <span v-if="viewopt.basic" v-html="vcard.basic"></span>
+            <!--span v-if="viewopt.audio" v-html="vcard.audio"></span-->
+            <span v-if="viewopt.mean" v-html="vcard.mean"></span>
+            <span v-if="viewopt.stat" v-html="vcard.stat"></span>
             <span v-if="viewopt.transform" v-html="vcard.transform"></span>
             <span v-if="viewopt.tag" v-html="vcard.tag"></span>
-            <span v-if="viewopt.basic" v-html="vcard.basic"></span>
-            <span v-if="viewopt.stat" v-html="vcard.stat"></span>
-            <span v-if="viewopt.mean" v-html="vcard.mean"></span>
             <span v-if="viewopt.vocabulary" v-html="vcard.vocabulary"></span>
             <span v-if="viewopt.oxford" v-html="vcard.oxford"></span>
             <span v-if="viewopt.collins" v-html="vcard.collins"></span>
-            <span v-if="viewopt.enmean" v-html="vcard.enmean"></span>
+            <span v-if="viewopt.enmeans" v-html="vcard.enmeans"></span>
             {% endraw %}
           </div>
         </div>
