@@ -3,6 +3,7 @@ var g_schemas = {
   'simple': ['front', 'posp', 'audio', 'basic', 'stat',  'mean'],
   'vocabulary': ['front', 'posp', 'audio', 'basic', 'stat', 'mean', 'vocabulary'],
   'oxford': ['front', 'posp', 'audio', 'basic', 'stat', 'mean', 'oxford'],
+  'collins': ['front', 'posp', 'audio', 'basic', 'stat', 'mean', 'collins'],
   'full': ['front', 'posp', 'audio', 'transform', 'tag', 'basic', 'stat', 'mean', 'vocabulary', 'oxford', 'collins', 'enmeans']
 };
 var g_curschema = {
