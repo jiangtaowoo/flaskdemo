@@ -989,7 +989,6 @@ class ENTranslation(object):
             return {}
 
     def query(self, format_type, pattern):
-        pattern = pattern.replace('*','%')
         word_obj = WordStorageModel()
         if format_type=="anki":
             schema_name = "html_card"
@@ -997,8 +996,16 @@ class ENTranslation(object):
             schema_name = "html_card"
         else:
             schema_name = "database_raw"
-        if "%" not in pattern and " " not in pattern.strip():
+        pattern = pattern.strip()
+        if "*" not in pattern and " " not in pattern:
             res = [self._translate_request(schema_name, pattern.strip())]
-        else:
-            res = word_obj.gen_batchcard_data(schema_name, {"word":pattern})
+        elif len(pattern)>3 and pattern[0]=="*" and pattern[-1]=="*":
+            #按词根查询
+            res = []
+            wordroot = pattern[1:-1].strip()
+            if len(wordroot)>1:
+                sqllikefmt = ["{0}.%".format(wordroot), "%.{0}.%".format(wordroot), "%.{0}".format(wordroot)]
+                for rootlike in sqllikefmt:
+                    filters = {"word": "%{0}%".format(wordroot), "wordem": rootlike}
+                    res.extend(word_obj.gen_batchcard_data(schema_name, filters))
         return res

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
+from compat import py23_2_unicode
 import os
 import yaml
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,26 +9,8 @@ from sqlalchemy import Column, String, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from collections import OrderedDict
 import six
-import sys
-# Syntax sugar.
-_ver = sys.version_info
-#: Python 2.x?
-is_py2 = (_ver[0] == 2)
-#: Python 3.x?
-is_py3 = (_ver[0] == 3)
 
-if is_py2:
-    def py23_2_unicode(v):
-        if isinstance(v, str):
-            return v.decode("utf-8")
-        else:
-            return v
-elif is_py3:
-    def py23_2_unicode(v):
-        if isinstance(v, bytes):
-            return v.decode("utf-8")
-        else:
-            return v
+
 
 
 class AdaptorORM(object):
@@ -85,7 +68,7 @@ class AdaptorORM(object):
 
     def save_data(self, modelname, modelcfg, **kwargs):
         if modelname in self._models_cfg:
-            tbname = self._models_cfg[modelname]['tablename']
+            #tbname = self._models_cfg[modelname]['tablename']
             session = self.DBSession()
             valid_data = self._filter_model_data(modelname, modelcfg, **kwargs)
             modelObj = self.DBOrmCls[modelname](**valid_data)
@@ -151,7 +134,8 @@ class AdaptorORM(object):
         #逐个将kwargs展开, 使用filter函数实现查询, 容纳like类型的查询
         ClsInst = self.DBOrmCls[dst_modelname]
         rule = []
-        for k, v in six.iteritems(kwargs):
+        #for k, v in six.iteritems(kwargs):
+        for k, v in six.iteritems(valid_cond_data):
             if len(v)>2 and '%' in v:
                 likefunc = getattr(getattr(ClsInst,k),"like")
                 rule.append(likefunc(v))
