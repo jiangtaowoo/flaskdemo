@@ -115,7 +115,7 @@ var app_query = new Vue({
   methods: {
     queryVocabulary: function (event) {
       event.preventDefault();
-      if (this.word.length > 2 && (event.key == "Enter" || event.key == "*")) {
+      if (this.word.length > 2 && (event.key == "Enter"/* || event.key == "*"*/)) {
         axios.post("/vocabulary/", {
             word: this.word
           })
